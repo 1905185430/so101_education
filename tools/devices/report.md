@@ -1,6 +1,6 @@
 # SO-101 实验设备检测报告
 
-- 生成时间: `2026-05-07T17:18:12.353443`
+- 生成时间: `2026-05-07T17:23:32.353647`
 - 检测阶段: `all`
 
 ## 当前角色身份与端口
@@ -8,14 +8,14 @@
 - `leader`: missing | 当前tty: `未识别`
 - `follower`: missing | 当前tty: `未识别`
 - `top_camera`: missing | 当前dev: `未识别`
-- `side_camera`: missing | 当前dev: `未识别`
 - `wrist_camera`: missing | 当前dev: `未识别`
+- `side_camera`: missing | 当前dev: `未识别`
 
 ## 三次课使用提示
 
 - 第一次课重点关注 `leader`、`follower` 和当前 `tty`，用于角色绑定与校准命令改写。相关背景先阅读 [01_so101_intro.md](/home/xuan/so101_education/primer/01_so101_intro.md) 和 [02_lerobot_intro.md](/home/xuan/so101_education/primer/02_lerobot_intro.md)。
-- 第二次课在第一次课基础上新增关注 `top_camera`、`side_camera` 和当前 `video` 节点，用于遥操作、录制与回放。相关背景先阅读 [03_embodied_data_intro.md](/home/xuan/so101_education/primer/03_embodied_data_intro.md)。
-- 第三次课重点沿用第二次课的数据集命名与相机映射，并结合训练输出目录与 checkpoint 路径完成训练启动和 rollout。相关背景先阅读 [04_act_intro.md](/home/xuan/so101_education/primer/04_act_intro.md)。
+- 第二次课在第一次课基础上新增关注 `top_camera`、`wrist_camera` 和当前 `video` 节点，用于遥操作、录制与回放。`side_camera` 作为可选扩展视角。相关背景先阅读 [03_embodied_data_intro.md](/home/xuan/so101_education/primer/03_embodied_data_intro.md)。
+- 第三次课重点沿用第二次课的数据集命名与相机映射，并结合训练输出目录与 checkpoint 路径完成训练启动和 rollout。默认相机为 `top_camera + wrist_camera`，`side_camera` 为可选扩展。相关背景先阅读 [04_act_intro.md](/home/xuan/so101_education/primer/04_act_intro.md)。
 
 ## 当前识别到的设备
 
@@ -113,7 +113,7 @@ lerobot-teleoperate \
   --robot.port=<FOLLOWER_PORT> \
   --teleop.type=so101_leader \
   --teleop.port=<LEADER_PORT> \
-  --robot.cameras='{"top": {"type": "opencv", "index_or_path": "<TOP_CAMERA_DEV>", "width": 640, "height": 480, "fps": 30}, "side": {"type": "opencv", "index_or_path": "<SIDE_CAMERA_DEV>", "width": 640, "height": 480, "fps": 30}}' \
+  --robot.cameras='{"top": {"type": "opencv", "index_or_path": "<TOP_CAMERA_DEV>", "width": 640, "height": 480, "fps": 30}, "wrist": {"type": "opencv", "index_or_path": "<WRIST_CAMERA_DEV>", "width": 640, "height": 480, "fps": 30}}' \
   --display_data=true
 ```
 
@@ -121,18 +121,18 @@ lerobot-teleoperate \
 - `<LEADER_PORT>` -> `<请根据检测结果填写>`
 - `<FOLLOWER_PORT>` -> `<请根据检测结果填写>`
 - `<TOP_CAMERA_DEV>` -> `<请根据检测结果填写>`
-- `<SIDE_CAMERA_DEV>` -> `<请根据检测结果填写>`
+- `<WRIST_CAMERA_DEV>` -> `<请根据检测结果填写>`
 
 你需要修改的参数：
 - `<LEADER_PORT>`
 - `<FOLLOWER_PORT>`
 - `<TOP_CAMERA_DEV>`
-- `<SIDE_CAMERA_DEV>`
+- `<WRIST_CAMERA_DEV>`
 
-修改后应达到的效果：移动主臂时，从臂同步运动，终端或弹窗可以看到 top 和 side 画面。
+修改后应达到的效果：移动主臂时，从臂同步运动，终端或弹窗可以看到 top 和 wrist 画面。
 
 自检问题：
-- 如果 side camera 实际是 /dev/video4，你应该改 JSON 里的哪一项？
+- 如果 wrist camera 实际是 /dev/video4，你应该改 JSON 里的哪一项？
 - 为什么本章要同时填写 leader、follower 和 camera 参数？
 
 ### record - 数据采集参考命令
@@ -143,7 +143,7 @@ lerobot-record \
   --robot.port=<FOLLOWER_PORT> \
   --teleop.type=so101_leader \
   --teleop.port=<LEADER_PORT> \
-  --robot.cameras='{"top": {"type": "opencv", "index_or_path": "<TOP_CAMERA_DEV>", "width": 640, "height": 480, "fps": 30}, "side": {"type": "opencv", "index_or_path": "<SIDE_CAMERA_DEV>", "width": 640, "height": 480, "fps": 30}}' \
+  --robot.cameras='{"top": {"type": "opencv", "index_or_path": "<TOP_CAMERA_DEV>", "width": 640, "height": 480, "fps": 30}, "wrist": {"type": "opencv", "index_or_path": "<WRIST_CAMERA_DEV>", "width": 640, "height": 480, "fps": 30}}' \
   --display_data=true \
   --dataset.repo_id=<DATASET_REPO_ID> \
   --dataset.single_task='<TASK_DESCRIPTION>' \
@@ -156,7 +156,7 @@ lerobot-record \
 - `<LEADER_PORT>` -> `<请根据检测结果填写>`
 - `<FOLLOWER_PORT>` -> `<请根据检测结果填写>`
 - `<TOP_CAMERA_DEV>` -> `<请根据检测结果填写>`
-- `<SIDE_CAMERA_DEV>` -> `<请根据检测结果填写>`
+- `<WRIST_CAMERA_DEV>` -> `<请根据检测结果填写>`
 - `<DATASET_REPO_ID>` -> `<请自行命名，例如 ${USER}/so101_pick_place>`
 - `<TASK_DESCRIPTION>` -> `<请填写任务描述，例如 pick cube and place into tray>`
 
@@ -164,7 +164,7 @@ lerobot-record \
 - `<LEADER_PORT>`
 - `<FOLLOWER_PORT>`
 - `<TOP_CAMERA_DEV>`
-- `<SIDE_CAMERA_DEV>`
+- `<WRIST_CAMERA_DEV>`
 - `<DATASET_REPO_ID>`
 - `<TASK_DESCRIPTION>`
 
@@ -206,24 +206,24 @@ lerobot-replay \
 lerobot-rollout \
   --robot.type=so101_follower \
   --robot.port=<FOLLOWER_PORT> \
-  --robot.cameras='{"top": {"type": "opencv", "index_or_path": "<TOP_CAMERA_DEV>", "width": 640, "height": 480, "fps": 30}, "side": {"type": "opencv", "index_or_path": "<SIDE_CAMERA_DEV>", "width": 640, "height": 480, "fps": 30}}' \
+  --robot.cameras='{"top": {"type": "opencv", "index_or_path": "<TOP_CAMERA_DEV>", "width": 640, "height": 480, "fps": 30}, "wrist": {"type": "opencv", "index_or_path": "<WRIST_CAMERA_DEV>", "width": 640, "height": 480, "fps": 30}}' \
   --policy.path=<CHECKPOINT_PATH>
 ```
 
 本机应参考的占位符取值：
 - `<FOLLOWER_PORT>` -> `<请根据检测结果填写>`
 - `<TOP_CAMERA_DEV>` -> `<请根据检测结果填写>`
-- `<SIDE_CAMERA_DEV>` -> `<请根据检测结果填写>`
+- `<WRIST_CAMERA_DEV>` -> `<请根据检测结果填写>`
 - `<CHECKPOINT_PATH>` -> `<请填写训练输出中的 checkpoint 路径>`
 
 你需要修改的参数：
 - `<FOLLOWER_PORT>`
 - `<TOP_CAMERA_DEV>`
-- `<SIDE_CAMERA_DEV>`
+- `<WRIST_CAMERA_DEV>`
 - `<CHECKPOINT_PATH>`
 
 修改后应达到的效果：已训练策略加载成功，follower 在相机反馈下执行任务。
 
 自检问题：
-- 为什么 rollout 阶段还要再次检查 camera 端口？
+- 为什么 rollout 阶段还要再次检查 top 和 wrist 的 camera 端口？
 - 如果 checkpoint 目录换了，你应替换哪个占位符？

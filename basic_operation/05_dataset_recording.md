@@ -17,7 +17,7 @@ lerobot-record \
   --robot.port=<FOLLOWER_PORT> \
   --teleop.type=so101_leader \
   --teleop.port=<LEADER_PORT> \
-  --robot.cameras='{"top": {"type": "opencv", "index_or_path": "<TOP_CAMERA_DEV>", "width": 640, "height": 480, "fps": 30}, "side": {"type": "opencv", "index_or_path": "<SIDE_CAMERA_DEV>", "width": 640, "height": 480, "fps": 30}}' \
+  --robot.cameras='{"top": {"type": "opencv", "index_or_path": "<TOP_CAMERA_DEV>", "width": 640, "height": 480, "fps": 30}, "wrist": {"type": "opencv", "index_or_path": "<WRIST_CAMERA_DEV>", "width": 640, "height": 480, "fps": 30}}' \
   --display_data=true \
   --dataset.repo_id=<DATASET_REPO_ID> \
   --dataset.single_task='<TASK_DESCRIPTION>' \
@@ -31,7 +31,7 @@ lerobot-record \
 - `<FOLLOWER_PORT>`
 - `<LEADER_PORT>`
 - `<TOP_CAMERA_DEV>`
-- `<SIDE_CAMERA_DEV>`
+- `<WRIST_CAMERA_DEV>`
 - `<DATASET_REPO_ID>`
 - `<TASK_DESCRIPTION>`
 
@@ -66,6 +66,10 @@ lerobot-replay \
 
 - 为什么 replay 不需要填写 leader 端口？
 - 为什么 record 阶段既要写机械臂端口，也要写 camera 节点？
+
+## 可选扩展
+
+如果本组额外有 `side_camera`，可以在默认 `top + wrist` 成功采集后，再把 `side` 加入采集命令作为第三路视角。
 
 ## 9. 本章提交要求
 

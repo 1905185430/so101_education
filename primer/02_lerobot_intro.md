@@ -33,7 +33,7 @@
 例如：
 
 - 机械臂端口来自检测工具的 `leader/follower`
-- 相机节点来自 `top_camera/side_camera`
+- 相机节点默认来自 `top_camera/wrist_camera`
 - 数据集名和输出目录来自学生自己的实验命名
 
 因此课程提供的是模板，不是成品命令。

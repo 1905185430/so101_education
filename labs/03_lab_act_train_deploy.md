@@ -56,7 +56,7 @@ lerobot-train \
 lerobot-rollout \
   --robot.type=so101_follower \
   --robot.port=<FOLLOWER_PORT> \
-  --robot.cameras='{"top": {"type": "opencv", "index_or_path": "<TOP_CAMERA_DEV>", "width": 640, "height": 480, "fps": 30}, "side": {"type": "opencv", "index_or_path": "<SIDE_CAMERA_DEV>", "width": 640, "height": 480, "fps": 30}}' \
+  --robot.cameras='{"top": {"type": "opencv", "index_or_path": "<TOP_CAMERA_DEV>", "width": 640, "height": 480, "fps": 30}, "wrist": {"type": "opencv", "index_or_path": "<WRIST_CAMERA_DEV>", "width": 640, "height": 480, "fps": 30}}' \
   --policy.path=<CHECKPOINT_PATH>
 ```
 
@@ -66,7 +66,7 @@ lerobot-rollout \
 - `<OUTPUT_DIR>`
 - `<FOLLOWER_PORT>`
 - `<TOP_CAMERA_DEV>`
-- `<SIDE_CAMERA_DEV>`
+- `<WRIST_CAMERA_DEV>`
 - `<CHECKPOINT_PATH>`
 
 ## 修改后应达到的效果
@@ -74,6 +74,10 @@ lerobot-rollout \
 - 课堂上能成功启动训练
 - 能说明输出目录里 checkpoint 的位置
 - 能在已有或课后完成的 checkpoint 上完成 rollout
+
+## 扩展部署说明
+
+如果本组额外接入了 `side_camera`，可以在默认 `top + wrist` 部署成功后，再把第三路视角加入 `robot.cameras` 配置，作为扩展部署练习。默认评分不要求这一项。
 
 ## 课内必须完成
 

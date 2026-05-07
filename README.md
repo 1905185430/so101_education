@@ -63,7 +63,7 @@ python3 tools/detect_system.py --show-template rollout
 检测工具会输出：
 
 - 当前识别到的设备
-- `leader`、`follower`、`top_camera`、`side_camera` 的当前端口
+- `leader`、`follower`、`top_camera`、`wrist_camera` 的当前端口
 - `tools/devices/report.md`
 - 带占位符的参考命令模板
 - 学生本机应参考的候选替换值
@@ -88,15 +88,16 @@ python3 tools/detect_system.py --write-roles-template
 - `leader`
 - `follower`
 - `top_camera`
-- `side_camera`
 - `wrist_camera`
+- `side_camera`（可选扩展）
 
 ## 统一占位符
 
 - `<LEADER_PORT>`
 - `<FOLLOWER_PORT>`
 - `<TOP_CAMERA_DEV>`
-- `<SIDE_CAMERA_DEV>`
+- `<WRIST_CAMERA_DEV>`
+- `<SIDE_CAMERA_DEV>`（仅扩展说明使用）
 - `<DATASET_REPO_ID>`
 - `<OUTPUT_DIR>`
 - `<CHECKPOINT_PATH>`

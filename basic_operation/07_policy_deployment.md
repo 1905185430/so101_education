@@ -14,7 +14,7 @@ python3 tools/detect_system.py --show-template rollout
 lerobot-rollout \
   --robot.type=so101_follower \
   --robot.port=<FOLLOWER_PORT> \
-  --robot.cameras='{"top": {"type": "opencv", "index_or_path": "<TOP_CAMERA_DEV>", "width": 640, "height": 480, "fps": 30}, "side": {"type": "opencv", "index_or_path": "<SIDE_CAMERA_DEV>", "width": 640, "height": 480, "fps": 30}}' \
+  --robot.cameras='{"top": {"type": "opencv", "index_or_path": "<TOP_CAMERA_DEV>", "width": 640, "height": 480, "fps": 30}, "wrist": {"type": "opencv", "index_or_path": "<WRIST_CAMERA_DEV>", "width": 640, "height": 480, "fps": 30}}' \
   --policy.path=<CHECKPOINT_PATH>
 ```
 
@@ -22,7 +22,7 @@ lerobot-rollout \
 
 - `<FOLLOWER_PORT>`
 - `<TOP_CAMERA_DEV>`
-- `<SIDE_CAMERA_DEV>`
+- `<WRIST_CAMERA_DEV>`
 - `<CHECKPOINT_PATH>`
 
 ## 4. 修改后应达到的效果
@@ -37,7 +37,7 @@ lerobot-rollout \
 
 - `follower -> /dev/ttyACM0`
 - `top_camera -> /dev/video10`
-- `side_camera -> /dev/video4`
+- `wrist_camera -> /dev/video4`
 - checkpoint 在 `outputs/act_pick_place_run1/checkpoints/last`
 
 那么你应把模板中的 4 个占位符都替换掉。
@@ -46,6 +46,10 @@ lerobot-rollout \
 
 - 为什么部署前还要重新运行检测工具？
 - 如果重新插拔相机后 `top_camera` 从 `/dev/video10` 变成 `/dev/video12`，哪一段必须重写？
+
+## 可选扩展
+
+如果本组还有 `side_camera`，可以在默认 `top + wrist` 部署成功后，把它加入 `robot.cameras` 作为第三路扩展视角。
 
 ## 7. 本章提交要求
 

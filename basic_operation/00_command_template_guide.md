@@ -10,7 +10,7 @@ python3 tools/detect_system.py
 
 重点看两类信息：
 
-- `角色身份`：`leader`、`follower`、`top_camera`、`side_camera`
+- `角色身份`：`leader`、`follower`、`top_camera`、`wrist_camera`
 - `当前端口`：例如 `/dev/ttyACM0`、`/dev/video4`
 
 ## 2. 先看模板，再替换占位符
@@ -48,12 +48,12 @@ lerobot-calibrate \
 如果检测结果显示：
 
 - `top_camera -> /dev/video10`
-- `side_camera -> /dev/video4`
+- `wrist_camera -> /dev/video4`
 
 那么你应把：
 
 - `<TOP_CAMERA_DEV>` 改成 `/dev/video10`
-- `<SIDE_CAMERA_DEV>` 改成 `/dev/video4`
+- `<WRIST_CAMERA_DEV>` 改成 `/dev/video4`
 
 ### 例 3：替换数据集和输出目录
 

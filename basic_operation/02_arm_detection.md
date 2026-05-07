@@ -10,7 +10,8 @@
 - 哪个是 `leader`
 - 哪个是 `follower`
 - 哪个是 `top_camera`
-- 哪个是 `side_camera`
+- 哪个是 `wrist_camera`
+- `side_camera` 是否作为可选扩展存在
 
 ## 2. 先看系统检测结果
 
@@ -54,6 +55,10 @@ lerobot-find-port
       "serial": "<TOP_CAMERA_SERIAL>",
       "by_path": "<TOP_CAMERA_BY_PATH>"
     },
+    "wrist_camera": {
+      "serial": "<WRIST_CAMERA_SERIAL>",
+      "by_path": "<WRIST_CAMERA_BY_PATH>"
+    },
     "side_camera": {
       "serial": "<SIDE_CAMERA_SERIAL>",
       "by_path": "<SIDE_CAMERA_BY_PATH>"
@@ -65,7 +70,7 @@ lerobot-find-port
 ## 5. 修改后应达到的效果
 
 - 再次运行 `python3 tools/detect_system.py` 时，报告中能看到 `leader` 和 `follower`
-- 如果相机已接好，报告中也能看到 `top_camera` 和 `side_camera`
+- 如果相机已接好，报告中默认应能看到 `top_camera` 和 `wrist_camera`
 - 即使重插设备，工具仍然能恢复这些角色
 
 ## 6. 命令改写训练

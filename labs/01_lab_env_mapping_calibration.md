@@ -76,7 +76,7 @@ lerobot-calibrate \
 
 - 复查一次 `device_roles.json`
 - 用文字说明 `serial`、`by-id`、`ttyACM*` 三者的区别
-- 如果课堂上没接相机，课后预习 `top_camera` 和 `side_camera` 的角色概念
+- 如果课堂上没接相机，课后预习 `top_camera` 和 `wrist_camera` 的角色概念
 
 ## 提交要求
 

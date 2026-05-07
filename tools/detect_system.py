@@ -4,7 +4,7 @@ SO-101 teaching-oriented hardware detection and command template helper.
 
 The script does three jobs:
 1. Detect arms and cameras and keep simple history.
-2. Restore role identities such as leader/follower/top_camera/side_camera.
+2. Restore role identities such as leader/follower/top_camera/wrist_camera.
 3. Produce reference command templates that students must edit by hand.
 
 Usage examples:
@@ -37,7 +37,7 @@ REPORT_JSON_PATH = BASE_DIR / "report.json"
 REPORT_MD_PATH = BASE_DIR / "report.md"
 
 ARM_ROLE_ORDER = ["leader", "follower"]
-CAMERA_ROLE_ORDER = ["top_camera", "side_camera", "wrist_camera"]
+CAMERA_ROLE_ORDER = ["top_camera", "wrist_camera", "side_camera"]
 SUPPORTED_STAGES = ["env", "robot", "camera", "train", "all"]
 SUPPORTED_FORMATS = ["text", "json", "markdown"]
 SUPPORTED_TEMPLATES = ["calibrate", "teleoperate", "record", "replay", "rollout"]
@@ -358,8 +358,8 @@ def write_roles_template():
         },
         "cameras": {
             "top_camera": {"serial": "", "by_path": ""},
-            "side_camera": {"serial": "", "by_path": ""},
             "wrist_camera": {"serial": "", "by_path": ""},
+            "side_camera": {"serial": "", "by_path": ""},
         },
     }
     save_json(ROLES_PATH, template)
@@ -516,6 +516,7 @@ def build_placeholder_values(role_summary: Dict[str, Any]) -> Dict[str, str]:
         "<LEADER_PORT>": "<请根据检测结果填写>",
         "<FOLLOWER_PORT>": "<请根据检测结果填写>",
         "<TOP_CAMERA_DEV>": "<请根据检测结果填写>",
+        "<WRIST_CAMERA_DEV>": "<请根据检测结果填写>",
         "<SIDE_CAMERA_DEV>": "<请根据检测结果填写>",
         "<DATASET_REPO_ID>": "<请自行命名，例如 ${USER}/so101_pick_place>",
         "<OUTPUT_DIR>": "<请自行填写训练输出目录>",
@@ -533,6 +534,8 @@ def build_placeholder_values(role_summary: Dict[str, Any]) -> Dict[str, str]:
         placeholders["<FOLLOWER_PORT>"] = arm_roles["follower"]["match"]["tty"]
     if cam_roles.get("top_camera", {}).get("match", {}).get("dev"):
         placeholders["<TOP_CAMERA_DEV>"] = cam_roles["top_camera"]["match"]["dev"]
+    if cam_roles.get("wrist_camera", {}).get("match", {}).get("dev"):
+        placeholders["<WRIST_CAMERA_DEV>"] = cam_roles["wrist_camera"]["match"]["dev"]
     if cam_roles.get("side_camera", {}).get("match", {}).get("dev"):
         placeholders["<SIDE_CAMERA_DEV>"] = cam_roles["side_camera"]["match"]["dev"]
     return placeholders
@@ -578,7 +581,7 @@ def build_reference_templates(role_summary: Dict[str, Any]) -> Dict[str, Any]:
             "  --robot.port=<FOLLOWER_PORT> \\",
             "  --teleop.type=so101_leader \\",
             "  --teleop.port=<LEADER_PORT> \\",
-            "  --robot.cameras='{\"top\": {\"type\": \"opencv\", \"index_or_path\": \"<TOP_CAMERA_DEV>\", \"width\": 640, \"height\": 480, \"fps\": 30}, \"side\": {\"type\": \"opencv\", \"index_or_path\": \"<SIDE_CAMERA_DEV>\", \"width\": 640, \"height\": 480, \"fps\": 30}}' \\",
+            "  --robot.cameras='{\"top\": {\"type\": \"opencv\", \"index_or_path\": \"<TOP_CAMERA_DEV>\", \"width\": 640, \"height\": 480, \"fps\": 30}, \"wrist\": {\"type\": \"opencv\", \"index_or_path\": \"<WRIST_CAMERA_DEV>\", \"width\": 640, \"height\": 480, \"fps\": 30}}' \\",
             "  --display_data=true",
         ]
     )
@@ -589,7 +592,7 @@ def build_reference_templates(role_summary: Dict[str, Any]) -> Dict[str, Any]:
             "<LEADER_PORT>": placeholders["<LEADER_PORT>"],
             "<FOLLOWER_PORT>": placeholders["<FOLLOWER_PORT>"],
             "<TOP_CAMERA_DEV>": placeholders["<TOP_CAMERA_DEV>"],
-            "<SIDE_CAMERA_DEV>": placeholders["<SIDE_CAMERA_DEV>"],
+            "<WRIST_CAMERA_DEV>": placeholders["<WRIST_CAMERA_DEV>"],
         },
         "fixed_parameters": [
             "--robot.type=so101_follower",
@@ -601,11 +604,11 @@ def build_reference_templates(role_summary: Dict[str, Any]) -> Dict[str, Any]:
             "<LEADER_PORT>",
             "<FOLLOWER_PORT>",
             "<TOP_CAMERA_DEV>",
-            "<SIDE_CAMERA_DEV>",
+            "<WRIST_CAMERA_DEV>",
         ],
-        "expected_result": "移动主臂时，从臂同步运动，终端或弹窗可以看到 top 和 side 画面。",
+        "expected_result": "移动主臂时，从臂同步运动，终端或弹窗可以看到 top 和 wrist 画面。",
         "self_check_questions": [
-            "如果 side camera 实际是 /dev/video4，你应该改 JSON 里的哪一项？",
+            "如果 wrist camera 实际是 /dev/video4，你应该改 JSON 里的哪一项？",
             "为什么本章要同时填写 leader、follower 和 camera 参数？",
         ],
     }
@@ -617,7 +620,7 @@ def build_reference_templates(role_summary: Dict[str, Any]) -> Dict[str, Any]:
             "  --robot.port=<FOLLOWER_PORT> \\",
             "  --teleop.type=so101_leader \\",
             "  --teleop.port=<LEADER_PORT> \\",
-            "  --robot.cameras='{\"top\": {\"type\": \"opencv\", \"index_or_path\": \"<TOP_CAMERA_DEV>\", \"width\": 640, \"height\": 480, \"fps\": 30}, \"side\": {\"type\": \"opencv\", \"index_or_path\": \"<SIDE_CAMERA_DEV>\", \"width\": 640, \"height\": 480, \"fps\": 30}}' \\",
+            "  --robot.cameras='{\"top\": {\"type\": \"opencv\", \"index_or_path\": \"<TOP_CAMERA_DEV>\", \"width\": 640, \"height\": 480, \"fps\": 30}, \"wrist\": {\"type\": \"opencv\", \"index_or_path\": \"<WRIST_CAMERA_DEV>\", \"width\": 640, \"height\": 480, \"fps\": 30}}' \\",
             "  --display_data=true \\",
             "  --dataset.repo_id=<DATASET_REPO_ID> \\",
             "  --dataset.single_task='<TASK_DESCRIPTION>' \\",
@@ -633,7 +636,7 @@ def build_reference_templates(role_summary: Dict[str, Any]) -> Dict[str, Any]:
             "<LEADER_PORT>": placeholders["<LEADER_PORT>"],
             "<FOLLOWER_PORT>": placeholders["<FOLLOWER_PORT>"],
             "<TOP_CAMERA_DEV>": placeholders["<TOP_CAMERA_DEV>"],
-            "<SIDE_CAMERA_DEV>": placeholders["<SIDE_CAMERA_DEV>"],
+            "<WRIST_CAMERA_DEV>": placeholders["<WRIST_CAMERA_DEV>"],
             "<DATASET_REPO_ID>": placeholders["<DATASET_REPO_ID>"],
             "<TASK_DESCRIPTION>": placeholders["<TASK_DESCRIPTION>"],
         },
@@ -648,7 +651,7 @@ def build_reference_templates(role_summary: Dict[str, Any]) -> Dict[str, Any]:
             "<LEADER_PORT>",
             "<FOLLOWER_PORT>",
             "<TOP_CAMERA_DEV>",
-            "<SIDE_CAMERA_DEV>",
+            "<WRIST_CAMERA_DEV>",
             "<DATASET_REPO_ID>",
             "<TASK_DESCRIPTION>",
         ],
@@ -691,26 +694,26 @@ def build_reference_templates(role_summary: Dict[str, Any]) -> Dict[str, Any]:
                 "lerobot-rollout \\",
                 "  --robot.type=so101_follower \\",
                 "  --robot.port=<FOLLOWER_PORT> \\",
-                "  --robot.cameras='{\"top\": {\"type\": \"opencv\", \"index_or_path\": \"<TOP_CAMERA_DEV>\", \"width\": 640, \"height\": 480, \"fps\": 30}, \"side\": {\"type\": \"opencv\", \"index_or_path\": \"<SIDE_CAMERA_DEV>\", \"width\": 640, \"height\": 480, \"fps\": 30}}' \\",
+                "  --robot.cameras='{\"top\": {\"type\": \"opencv\", \"index_or_path\": \"<TOP_CAMERA_DEV>\", \"width\": 640, \"height\": 480, \"fps\": 30}, \"wrist\": {\"type\": \"opencv\", \"index_or_path\": \"<WRIST_CAMERA_DEV>\", \"width\": 640, \"height\": 480, \"fps\": 30}}' \\",
                 "  --policy.path=<CHECKPOINT_PATH>",
             ]
         ),
         "replace_values": {
             "<FOLLOWER_PORT>": placeholders["<FOLLOWER_PORT>"],
             "<TOP_CAMERA_DEV>": placeholders["<TOP_CAMERA_DEV>"],
-            "<SIDE_CAMERA_DEV>": placeholders["<SIDE_CAMERA_DEV>"],
+            "<WRIST_CAMERA_DEV>": placeholders["<WRIST_CAMERA_DEV>"],
             "<CHECKPOINT_PATH>": placeholders["<CHECKPOINT_PATH>"],
         },
         "fixed_parameters": ["--robot.type=so101_follower", "width=640 height=480 fps=30"],
         "student_must_edit": [
             "<FOLLOWER_PORT>",
             "<TOP_CAMERA_DEV>",
-            "<SIDE_CAMERA_DEV>",
+            "<WRIST_CAMERA_DEV>",
             "<CHECKPOINT_PATH>",
         ],
         "expected_result": "已训练策略加载成功，follower 在相机反馈下执行任务。",
         "self_check_questions": [
-            "为什么 rollout 阶段还要再次检查 camera 端口？",
+            "为什么 rollout 阶段还要再次检查 top 和 wrist 的 camera 端口？",
             "如果 checkpoint 目录换了，你应替换哪个占位符？",
         ],
     }
@@ -798,8 +801,8 @@ def format_role_line(role_name: str, data: Dict[str, Any], key: str) -> str:
 def get_lab_focus_notes() -> List[str]:
     return [
         "第一次课重点关注 `leader`、`follower` 和当前 `tty`，用于角色绑定与校准命令改写。相关背景先阅读 [01_so101_intro.md](/home/xuan/so101_education/primer/01_so101_intro.md) 和 [02_lerobot_intro.md](/home/xuan/so101_education/primer/02_lerobot_intro.md)。",
-        "第二次课在第一次课基础上新增关注 `top_camera`、`side_camera` 和当前 `video` 节点，用于遥操作、录制与回放。相关背景先阅读 [03_embodied_data_intro.md](/home/xuan/so101_education/primer/03_embodied_data_intro.md)。",
-        "第三次课重点沿用第二次课的数据集命名与相机映射，并结合训练输出目录与 checkpoint 路径完成训练启动和 rollout。相关背景先阅读 [04_act_intro.md](/home/xuan/so101_education/primer/04_act_intro.md)。",
+        "第二次课在第一次课基础上新增关注 `top_camera`、`wrist_camera` 和当前 `video` 节点，用于遥操作、录制与回放。`side_camera` 作为可选扩展视角。相关背景先阅读 [03_embodied_data_intro.md](/home/xuan/so101_education/primer/03_embodied_data_intro.md)。",
+        "第三次课重点沿用第二次课的数据集命名与相机映射，并结合训练输出目录与 checkpoint 路径完成训练启动和 rollout。默认相机为 `top_camera + wrist_camera`，`side_camera` 为可选扩展。相关背景先阅读 [04_act_intro.md](/home/xuan/so101_education/primer/04_act_intro.md)。",
     ]
 
 

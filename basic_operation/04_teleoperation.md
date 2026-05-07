@@ -16,7 +16,7 @@ lerobot-teleoperate \
   --robot.port=<FOLLOWER_PORT> \
   --teleop.type=so101_leader \
   --teleop.port=<LEADER_PORT> \
-  --robot.cameras='{"top": {"type": "opencv", "index_or_path": "<TOP_CAMERA_DEV>", "width": 640, "height": 480, "fps": 30}, "side": {"type": "opencv", "index_or_path": "<SIDE_CAMERA_DEV>", "width": 640, "height": 480, "fps": 30}}' \
+  --robot.cameras='{"top": {"type": "opencv", "index_or_path": "<TOP_CAMERA_DEV>", "width": 640, "height": 480, "fps": 30}, "wrist": {"type": "opencv", "index_or_path": "<WRIST_CAMERA_DEV>", "width": 640, "height": 480, "fps": 30}}' \
   --display_data=true
 ```
 
@@ -25,7 +25,7 @@ lerobot-teleoperate \
 - `<FOLLOWER_PORT>`
 - `<LEADER_PORT>`
 - `<TOP_CAMERA_DEV>`
-- `<SIDE_CAMERA_DEV>`
+- `<WRIST_CAMERA_DEV>`
 
 这些值都来自检测工具输出，而不是自己猜。
 
@@ -42,20 +42,24 @@ lerobot-teleoperate \
 - `follower -> /dev/ttyACM0`
 - `leader -> /dev/ttyACM1`
 - `top_camera -> /dev/video10`
-- `side_camera -> /dev/video4`
+- `wrist_camera -> /dev/video4`
 
 那么你应该把模板中的 4 个占位符全部替换，而不是只改机械臂端口。
 
 ## 6. 常见问题
 
 - 只改了机械臂端口，没改 camera 节点
-- 把 `top_camera` 和 `side_camera` 写反
+- 把 `top_camera` 和 `wrist_camera` 写反
 - 重插相机后沿用旧的 `/dev/video*`
 
 ## 7. 自检问题
 
-- 如果 side camera 是 `/dev/video4`，应改 JSON 中的哪一项？
+- 如果 wrist camera 是 `/dev/video4`，应改 JSON 中的哪一项？
 - 为什么本章的 camera 参数要写在同一条命令里？
+
+## 可选扩展
+
+如果现场额外接入 `side_camera`，可以在默认 `top + wrist` 跑通后，把它作为第三路视角加入 `robot.cameras`，用于进阶多视角实验。
 
 ## 8. 本章提交要求
 
