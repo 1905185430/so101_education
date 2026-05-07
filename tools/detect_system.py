@@ -797,9 +797,9 @@ def format_role_line(role_name: str, data: Dict[str, Any], key: str) -> str:
 
 def get_lab_focus_notes() -> List[str]:
     return [
-        "第一次课重点关注 `leader`、`follower` 和当前 `tty`，用于角色绑定与校准命令改写。",
-        "第二次课在第一次课基础上新增关注 `top_camera`、`side_camera` 和当前 `video` 节点，用于遥操作、录制与回放。",
-        "第三次课重点沿用第二次课的数据集命名与相机映射，并结合训练输出目录与 checkpoint 路径完成训练启动和 rollout。",
+        "第一次课重点关注 `leader`、`follower` 和当前 `tty`，用于角色绑定与校准命令改写。相关背景先阅读 [01_so101_intro.md](/home/xuan/so101_education/primer/01_so101_intro.md) 和 [02_lerobot_intro.md](/home/xuan/so101_education/primer/02_lerobot_intro.md)。",
+        "第二次课在第一次课基础上新增关注 `top_camera`、`side_camera` 和当前 `video` 节点，用于遥操作、录制与回放。相关背景先阅读 [03_embodied_data_intro.md](/home/xuan/so101_education/primer/03_embodied_data_intro.md)。",
+        "第三次课重点沿用第二次课的数据集命名与相机映射，并结合训练输出目录与 checkpoint 路径完成训练启动和 rollout。相关背景先阅读 [04_act_intro.md](/home/xuan/so101_education/primer/04_act_intro.md)。",
     ]
 
 

@@ -2,6 +2,14 @@
 
 本次课的目标是让学生在已预装好的 LeRobot 环境中，学会读取检测报告、绑定设备角色，并根据当前端口改写主从臂校准命令。
 
+## 先修导学
+
+- [00. 课程导览](/home/xuan/so101_education/primer/00_course_map.md)
+- [01. SO-101 导学](/home/xuan/so101_education/primer/01_so101_intro.md)
+- [02. LeRobot 导学](/home/xuan/so101_education/primer/02_lerobot_intro.md)
+
+建议先理解 `leader`、`follower`、角色绑定和 CLI 工作流，再进入本次课的端口识别与校准操作。
+
 ## 课前准备
 
 - 教师已完成 LeRobot 与依赖预装

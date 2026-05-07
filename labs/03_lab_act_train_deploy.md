@@ -2,6 +2,12 @@
 
 本次课的目标是让学生基于第二次课采集的数据，改写训练与部署命令，完成 ACT 训练启动、日志理解，并在已有或课后完成的 checkpoint 上执行 rollout。
 
+## 先修导学
+
+- [04. ACT 导学](/home/xuan/so101_education/primer/04_act_intro.md)
+
+建议先理解 `dataset`、`checkpoint`、`rollout` 和 ACT 的基本作用，再进入本次课的训练与部署链路。
+
 ## 课前准备
 
 - 第二次课已经得到可用数据集

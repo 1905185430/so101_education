@@ -2,6 +2,12 @@
 
 本次课的目标是让学生在已经完成角色绑定和校准的基础上，改写相机与采集相关命令，完成遥操作、录制和回放验证。
 
+## 先修导学
+
+- [03. 具身智能数据采集导学](/home/xuan/so101_education/primer/03_embodied_data_intro.md)
+
+建议先理解 `observation`、`action`、`episode`、`replay` 的含义，再进入本次课的数据采集与回放实验。
+
 ## 课前准备
 
 - 第一次课已完成 `leader` 和 `follower` 绑定

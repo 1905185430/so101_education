@@ -2,6 +2,11 @@
 
 这套仓库面向课堂教学，当前学生主入口已经重组为 3 次课、3 个实验。目标仍然不变：学生根据自己机器上的硬件映射，手动改写 LeRobot 参考命令，而不是直接复制成品命令。
 
+现在仓库采用“两层结构”：
+
+- `primer/`：概念导学，先理解 SO-101、LeRobot、数据采集和 ACT
+- `labs/`：三次课实验主线，带着导学知识进入具体操作
+
 ## 当前版本
 
 - 当前教学主线：`三次课版`
@@ -13,6 +18,16 @@
 1. [第一次课：环境验证、设备映射与主从臂校准](labs/01_lab_env_mapping_calibration.md)
 2. [第二次课：遥操作、数据采集与回放](labs/02_lab_teleop_record_replay.md)
 3. [第三次课：ACT 训练启动与策略部署](labs/03_lab_act_train_deploy.md)
+
+## 导学主入口
+
+建议学生先按下面顺序阅读导学，再进入三次课实验：
+
+1. [00. 课程导览](primer/00_course_map.md)
+2. [01. SO-101 导学](primer/01_so101_intro.md)
+3. [02. LeRobot 导学](primer/02_lerobot_intro.md)
+4. [03. 具身智能数据采集导学](primer/03_embodied_data_intro.md)
+5. [04. ACT 导学](primer/04_act_intro.md)
 
 ## 课程节奏
 
@@ -60,6 +75,13 @@ python3 tools/detect_system.py --write-roles-template
 ```
 
 然后由教师或助教根据真实设备填写 [device_roles.json](/home/xuan/so101_education/tools/devices/device_roles.json)。
+
+## 导学资料来源说明
+
+- 实验主线看 `labs/`
+- 概念理解看 `primer/`
+- 原网站参考链接统一放在每份导学文末的“资料来源”区块
+- 链接优先使用官方文档、原始论文和官方仓库页面
 
 ## 统一角色名
 
