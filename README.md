@@ -64,6 +64,8 @@ python3 tools/detect_system.py --show-template rollout
 
 - 当前识别到的设备
 - `leader`、`follower`、`top_camera`、`wrist_camera` 的当前端口
+- 每一路相机当前对应的固定身份标识 `by_path`
+- `tools/devices/images/` 下的相机截图
 - `tools/devices/report.md`
 - 带占位符的参考命令模板
 - 学生本机应参考的候选替换值
@@ -75,6 +77,23 @@ python3 tools/detect_system.py --write-roles-template
 ```
 
 然后由教师或助教根据真实设备填写 [device_roles.json](/home/xuan/so101_education/tools/devices/device_roles.json)。
+
+## detect_system 结果怎么用
+
+建议学生每次都按同一顺序操作：
+
+1. 先运行 `python3 tools/detect_system.py`
+2. 打开 [report.md](/home/xuan/so101_education/tools/devices/report.md)，先看 `leader`、`follower`、`top_camera`、`wrist_camera` 的当前端口
+3. 再看报告中的 `固定身份(by-id / by-path)`，其中机械臂优先抄 `by-id`，相机优先抄 `by_path`
+4. 打开 `tools/devices/images/` 下的截图，确认哪一路是 `top`，哪一路是 `wrist`
+5. 填写 [device_roles.json](/home/xuan/so101_education/tools/devices/device_roles.json)
+6. 重新运行一次 `python3 tools/detect_system.py`，确认角色已经从 `missing` 变成 `connected`
+7. 最后再把参考命令中的当前 `tty` / `video` 占位符替换掉
+
+这里要特别区分两类字段：
+
+- 固定身份标识：用于填写 `device_roles.json`，帮助你在断电重连后恢复角色
+- 当前 `tty` / `dev`：用于改写本次实际要执行的 LeRobot 命令
 
 ## 导学资料来源说明
 

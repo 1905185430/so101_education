@@ -14,11 +14,11 @@
       "serial": "",
       "by_path": ""
     },
-    "side_camera": {
+    "wrist_camera": {
       "serial": "",
       "by_path": ""
     },
-    "wrist_camera": {
+    "side_camera": {
       "serial": "",
       "by_path": ""
     }

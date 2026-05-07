@@ -42,12 +42,16 @@ python3 tools/detect_system.py
 lerobot-find-port
 ```
 
-重点查看：
+第一次运行 `python3 tools/detect_system.py` 后，请按这个顺序看：
 
-- `leader`
-- `follower`
-- 当前 `tty`
-- `tools/devices/report.md`
+1. 打开 [report.md](/home/xuan/so101_education/tools/devices/report.md)
+2. 在“当前角色身份与端口”里看 `leader`、`follower` 当前对应的 `tty`
+3. 在“填写 device_roles.json 的建议来源”里抄机械臂的 `by-id` 和 `serial`
+4. 如果本组已经接了相机，也顺手看一下 `top_camera`、`wrist_camera` 的 `by_path` 和截图，后面第二次课会直接用到
+5. 打开 [device_roles.json](/home/xuan/so101_education/tools/devices/device_roles.json)，把 `leader` 和 `follower` 的 `port`、`serial` 填进去
+6. 填完以后再运行一次 `python3 tools/detect_system.py`，确认报告中的角色不再是 `missing`
+
+如果你重新插拔了主从臂，`/dev/ttyACM*` 可能会变，但只要 `device_roles.json` 里写的是正确的 `by-id`，角色就应该还能恢复成原来的 `leader` / `follower`。
 
 ### 3. 参考命令
 
@@ -71,6 +75,7 @@ lerobot-calibrate \
 - 主臂和从臂分别完成零位校准
 - 终端出现保存结果或校准完成提示
 - 后续遥操作时主从臂没有明显零位偏差
+- 即使断电重连后重新运行检测，`leader` 和 `follower` 仍然能恢复到正确角色
 
 ## 课后任务
 

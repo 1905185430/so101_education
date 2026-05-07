@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-05-07T17:23:32.353647",
+  "timestamp": "2026-05-07T17:45:26.891946",
   "stage": "all",
   "system": {
     "cwd": "/home/xuan/so101_education",
@@ -24,7 +24,7 @@
         "name": "v4l2-ctl",
         "status": "warn",
         "detail": "v4l2-ctl: 未找到",
-        "hint": "如果后续实验会用到 v4l2-ctl，请先在 LeRobot 环境中完成安装。"
+        "hint": "如果缺少 v4l2-ctl，脚本仍会尝试识别相机，但无法完整读取格式与彩色流信息。"
       },
       {
         "name": "nvidia-smi",
@@ -86,15 +86,39 @@
     "camera": [
       {
         "name": "cameras_detected",
-        "status": "warn",
-        "detail": "已连接相机数量: 0",
-        "hint": "如果后续实验需要相机，请检查 USB 连接和供电。"
+        "status": "pass",
+        "detail": "已连接相机数量: 4",
+        "hint": "下一步请结合 report.md 中的截图、by-path 和当前 dev 节点完成角色绑定。"
       },
       {
         "name": "camera_color_stream",
         "status": "warn",
         "detail": "支持彩色流的已连接相机数量: 0",
-        "hint": "如果采集或遥操作需要画面显示，请优先选择支持彩色流的相机。"
+        "hint": "如果采集或遥操作需要画面显示，请优先选择支持彩色流的相机；若格式未知，可先依靠截图是否成功判断。"
+      },
+      {
+        "name": "capture:Sonix_Technology_Co.__Ltd._USB2.0_HD_UVC_WebCam",
+        "status": "warn",
+        "detail": "Sonix_Technology_Co.__Ltd._USB2.0_HD_UVC_WebCam 未保存截图",
+        "hint": "OpenCV 未安装，无法保存截图。"
+      },
+      {
+        "name": "capture:Orbbec_R__Orbbec_Gemini_335_CP15641000AW",
+        "status": "warn",
+        "detail": "Orbbec_R__Orbbec_Gemini_335_CP15641000AW 未保存截图",
+        "hint": "OpenCV 未安装，无法保存截图。"
+      },
+      {
+        "name": "capture:icSpring_icspring_camera_20240307110322",
+        "status": "warn",
+        "detail": "icSpring_icspring_camera_20240307110322 未保存截图",
+        "hint": "OpenCV 未安装，无法保存截图。"
+      },
+      {
+        "name": "capture:pci-0000:00:14.0-usbv2-0:1.4:1.4",
+        "status": "warn",
+        "detail": "pci-0000:00:14.0-usbv2-0:1.4:1.4 未保存截图",
+        "hint": "OpenCV 未安装，无法保存截图。"
       }
     ],
     "train": [
@@ -128,11 +152,11 @@
         "serial": "",
         "by_path": ""
       },
-      "side_camera": {
+      "wrist_camera": {
         "serial": "",
         "by_path": ""
       },
-      "wrist_camera": {
+      "side_camera": {
         "serial": "",
         "by_path": ""
       }
@@ -194,6 +218,59 @@
       }
     }
   },
+  "role_identity_reference": {
+    "arms": {
+      "leader": {
+        "status": "missing",
+        "configured": false,
+        "serial": "未识别",
+        "current_tty": "未识别",
+        "fixed_port": "未填写"
+      },
+      "follower": {
+        "status": "missing",
+        "configured": false,
+        "serial": "未识别",
+        "current_tty": "未识别",
+        "fixed_port": "未填写"
+      }
+    },
+    "cameras": {
+      "top_camera": {
+        "status": "missing",
+        "configured": false,
+        "serial": "未识别",
+        "current_dev": "未识别",
+        "fixed_by_path": "未填写",
+        "by_id": "未知",
+        "image": "本次未生成截图",
+        "capture_status": "unknown",
+        "capture_detail": ""
+      },
+      "wrist_camera": {
+        "status": "missing",
+        "configured": false,
+        "serial": "未识别",
+        "current_dev": "未识别",
+        "fixed_by_path": "未填写",
+        "by_id": "未知",
+        "image": "本次未生成截图",
+        "capture_status": "unknown",
+        "capture_detail": ""
+      },
+      "side_camera": {
+        "status": "missing",
+        "configured": false,
+        "serial": "未识别",
+        "current_dev": "未识别",
+        "fixed_by_path": "未填写",
+        "by_id": "未知",
+        "image": "本次未生成截图",
+        "capture_status": "unknown",
+        "capture_detail": ""
+      }
+    }
+  },
   "devices": {
     "arms": {
       "5B41532613": {
@@ -202,7 +279,7 @@
         "serial": "5B41532613",
         "status": "connected",
         "first_seen": "2026-04-24T21:55:24.807057",
-        "last_seen": "2026-05-07T17:23:32.353258"
+        "last_seen": "2026-05-07T17:45:26.890279"
       },
       "5B42137834": {
         "tty": "/dev/ttyACM1",
@@ -210,311 +287,39 @@
         "serial": "5B42137834",
         "status": "connected",
         "first_seen": "2026-04-24T21:55:24.807057",
-        "last_seen": "2026-05-07T17:23:32.353258"
+        "last_seen": "2026-05-07T17:45:26.890279"
       }
     },
     "cameras": {
       "Sonix_Technology_Co.__Ltd._USB2.0_HD_UVC_WebCam": {
         "dev": "/dev/video0",
-        "product": "USB2.0 HD",
+        "product": "Sonix Technology Co.  Ltd. USB2.0 HD UVC WebCam",
         "by_id": "/dev/v4l/by-id/usb-Sonix_Technology_Co.__Ltd._USB2.0_HD_UVC_WebCam-video-index0",
         "serial": "Sonix_Technology_Co.__Ltd._USB2.0_HD_UVC_WebCam",
         "by_path": "/dev/v4l/by-path/pci-0000:00:14.0-usb-0:7:1.0-video-index0",
-        "formats": [
-          {
-            "fourcc": "MJPG",
-            "resolutions": [
-              {
-                "width": 1280,
-                "height": 720,
-                "fps": [
-                  30.0
-                ]
-              },
-              {
-                "width": 640,
-                "height": 480,
-                "fps": [
-                  30.0
-                ]
-              },
-              {
-                "width": 352,
-                "height": 288,
-                "fps": [
-                  30.0
-                ]
-              },
-              {
-                "width": 320,
-                "height": 240,
-                "fps": [
-                  30.0
-                ]
-              },
-              {
-                "width": 176,
-                "height": 144,
-                "fps": [
-                  30.0
-                ]
-              },
-              {
-                "width": 160,
-                "height": 120,
-                "fps": [
-                  30.0
-                ]
-              }
-            ]
-          },
-          {
-            "fourcc": "YUYV",
-            "resolutions": [
-              {
-                "width": 1280,
-                "height": 720,
-                "fps": [
-                  10.0
-                ]
-              },
-              {
-                "width": 640,
-                "height": 480,
-                "fps": [
-                  30.0
-                ]
-              },
-              {
-                "width": 352,
-                "height": 288,
-                "fps": [
-                  30.0
-                ]
-              },
-              {
-                "width": 320,
-                "height": 240,
-                "fps": [
-                  30.0
-                ]
-              },
-              {
-                "width": 176,
-                "height": 144,
-                "fps": [
-                  30.0
-                ]
-              },
-              {
-                "width": 160,
-                "height": 120,
-                "fps": [
-                  30.0
-                ]
-              }
-            ]
-          }
-        ],
-        "status": "disconnected",
+        "formats": [],
+        "status": "connected",
         "first_seen": "2026-04-24T21:55:24.807043",
-        "last_seen": "2026-04-27T21:43:32.552225"
+        "last_seen": "2026-05-07T17:45:26.890244",
+        "color_stream": null,
+        "image": "",
+        "capture_status": "failed",
+        "capture_detail": "OpenCV 未安装，无法保存截图。"
       },
       "Orbbec_R__Orbbec_Gemini_335_CP15641000AW": {
-        "dev": "/dev/video10",
-        "product": "Orbbec Gemin",
+        "dev": "/dev/video4",
+        "product": "Orbbec R  Orbbec Gemini 335 CP15641000AW",
         "by_id": "/dev/v4l/by-id/usb-Orbbec_R__Orbbec_Gemini_335_CP15641000AW-video-index0",
         "serial": "Orbbec_R__Orbbec_Gemini_335_CP15641000AW",
-        "by_path": "/dev/v4l/by-path/pci-0000:00:14.0-usb-0:1.4:1.4-video-index0",
-        "formats": [
-          {
-            "fourcc": "YUYV",
-            "resolutions": [
-              {
-                "width": 320,
-                "height": 180,
-                "fps": [
-                  60.0,
-                  30.0,
-                  6.0
-                ]
-              },
-              {
-                "width": 320,
-                "height": 240,
-                "fps": [
-                  60.0,
-                  30.0,
-                  6.0
-                ]
-              },
-              {
-                "width": 424,
-                "height": 240,
-                "fps": [
-                  60.0,
-                  30.0,
-                  15.0,
-                  6.0
-                ]
-              },
-              {
-                "width": 640,
-                "height": 360,
-                "fps": [
-                  60.0,
-                  30.0,
-                  15.0,
-                  6.0
-                ]
-              },
-              {
-                "width": 640,
-                "height": 480,
-                "fps": [
-                  60.0,
-                  30.0,
-                  15.0,
-                  6.0
-                ]
-              },
-              {
-                "width": 848,
-                "height": 480,
-                "fps": [
-                  60.0,
-                  30.0,
-                  15.0,
-                  6.0
-                ]
-              },
-              {
-                "width": 960,
-                "height": 540,
-                "fps": [
-                  60.0,
-                  30.0,
-                  15.0,
-                  6.0
-                ]
-              },
-              {
-                "width": 1280,
-                "height": 720,
-                "fps": [
-                  60.0,
-                  30.0,
-                  15.0,
-                  6.0
-                ]
-              },
-              {
-                "width": 1920,
-                "height": 1080,
-                "fps": [
-                  30.0,
-                  15.0,
-                  6.0
-                ]
-              }
-            ]
-          },
-          {
-            "fourcc": "MJPG",
-            "resolutions": [
-              {
-                "width": 320,
-                "height": 180,
-                "fps": [
-                  60.0,
-                  30.0,
-                  6.0
-                ]
-              },
-              {
-                "width": 320,
-                "height": 240,
-                "fps": [
-                  60.0,
-                  30.0,
-                  6.0
-                ]
-              },
-              {
-                "width": 424,
-                "height": 240,
-                "fps": [
-                  60.0,
-                  30.0,
-                  15.0,
-                  6.0
-                ]
-              },
-              {
-                "width": 640,
-                "height": 360,
-                "fps": [
-                  60.0,
-                  30.0,
-                  15.0,
-                  6.0
-                ]
-              },
-              {
-                "width": 640,
-                "height": 480,
-                "fps": [
-                  60.0,
-                  30.0,
-                  15.0,
-                  6.0
-                ]
-              },
-              {
-                "width": 848,
-                "height": 480,
-                "fps": [
-                  60.0,
-                  30.0,
-                  15.0,
-                  6.0
-                ]
-              },
-              {
-                "width": 960,
-                "height": 540,
-                "fps": [
-                  60.0,
-                  30.0,
-                  15.0,
-                  6.0
-                ]
-              },
-              {
-                "width": 1280,
-                "height": 720,
-                "fps": [
-                  60.0,
-                  30.0,
-                  15.0,
-                  6.0
-                ]
-              },
-              {
-                "width": 1920,
-                "height": 1080,
-                "fps": [
-                  30.0,
-                  15.0,
-                  6.0
-                ]
-              }
-            ]
-          }
-        ],
-        "status": "disconnected",
+        "by_path": "/dev/v4l/by-path/pci-0000:00:14.0-usb-0:1.4:1.0-video-index0",
+        "formats": [],
+        "status": "connected",
         "first_seen": "2026-04-24T21:55:24.807043",
-        "last_seen": "2026-04-27T21:43:32.552225"
+        "last_seen": "2026-05-07T17:45:26.890244",
+        "color_stream": null,
+        "image": "",
+        "capture_status": "failed",
+        "capture_detail": "OpenCV 未安装，无法保存截图。"
       },
       "Orbbec_R__Orbbec_Gemini_335_CP1L44P0007K": {
         "dev": "/dev/video14",
@@ -590,74 +395,47 @@
         ],
         "status": "disconnected",
         "first_seen": "2026-04-24T21:55:24.807043",
-        "last_seen": "2026-04-25T12:45:34.118644"
+        "last_seen": "2026-04-25T12:45:34.118644",
+        "image": "",
+        "capture_status": "not_connected",
+        "capture_detail": "本次未连接该相机，因此没有生成截图。"
       },
       "icSpring_icspring_camera_20240307110322": {
         "dev": "/dev/video2",
-        "product": "icspring camer",
+        "product": "icSpring icspring camera 20240307110322",
         "by_id": "/dev/v4l/by-id/usb-icSpring_icspring_camera_20240307110322-video-index0",
         "serial": "icSpring_icspring_camera_20240307110322",
         "by_path": "/dev/v4l/by-path/pci-0000:00:14.0-usb-0:1.1:1.0-video-index0",
-        "formats": [
-          {
-            "fourcc": "MJPG",
-            "resolutions": [
-              {
-                "width": 1920,
-                "height": 1080,
-                "fps": [
-                  30.0
-                ]
-              },
-              {
-                "width": 608,
-                "height": 1024,
-                "fps": [
-                  30.0,
-                  30.0
-                ]
-              },
-              {
-                "width": 640,
-                "height": 1024,
-                "fps": [
-                  30.0
-                ]
-              },
-              {
-                "width": 640,
-                "height": 480,
-                "fps": [
-                  30.0
-                ]
-              },
-              {
-                "width": 800,
-                "height": 600,
-                "fps": [
-                  30.0
-                ]
-              },
-              {
-                "width": 1280,
-                "height": 720,
-                "fps": [
-                  30.0
-                ]
-              }
-            ]
-          }
-        ],
-        "status": "disconnected",
+        "formats": [],
+        "status": "connected",
         "first_seen": "2026-04-24T21:55:24.807043",
-        "last_seen": "2026-04-27T21:43:32.552225"
+        "last_seen": "2026-05-07T17:45:26.890244",
+        "color_stream": null,
+        "image": "",
+        "capture_status": "failed",
+        "capture_detail": "OpenCV 未安装，无法保存截图。"
+      },
+      "pci-0000:00:14.0-usbv2-0:1.4:1.4": {
+        "dev": "/dev/video10",
+        "by_id": "",
+        "by_path": "/dev/v4l/by-path/pci-0000:00:14.0-usbv2-0:1.4:1.4-video-index0",
+        "serial": "pci-0000:00:14.0-usbv2-0:1.4:1.4",
+        "product": "pci-0000:00:14.0-usbv2-0:1.4:1.4 ",
+        "formats": [],
+        "color_stream": null,
+        "status": "connected",
+        "first_seen": "2026-05-07T17:43:57.693944",
+        "last_seen": "2026-05-07T17:45:26.890244",
+        "image": "",
+        "capture_status": "failed",
+        "capture_detail": "OpenCV 未安装，无法保存截图。"
       }
     }
   },
   "summary": {
     "checks": {
-      "pass": 3,
-      "warn": 13,
+      "pass": 4,
+      "warn": 16,
       "fail": 0
     },
     "arms": {
@@ -665,8 +443,8 @@
       "connected": 2
     },
     "cameras": {
-      "total": 4,
-      "connected": 0
+      "total": 5,
+      "connected": 4
     }
   },
   "reference_templates": {
@@ -799,8 +577,9 @@
     }
   },
   "next_steps": [
-    "先核对角色身份是否正确，再开始修改参考命令。",
-    "参考命令中的占位符必须由学生手动替换后再执行。",
-    "如果角色未绑定，请先编辑 tools/devices/device_roles.json。"
+    "先打开 tools/devices/report.md，核对 leader、follower、top_camera、wrist_camera 的当前端口与固定身份标识。",
+    "再打开 tools/devices/images/ 下的截图，确认哪一路画面是 top、哪一路画面是 wrist。",
+    "如果角色未绑定，请先把机械臂的 by-id / serial、相机的 by_path / serial 填入 tools/devices/device_roles.json。",
+    "角色确认无误后，再把参考命令中的当前 tty / video 占位符手动替换掉。"
   ]
 }

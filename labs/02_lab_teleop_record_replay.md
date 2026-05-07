@@ -33,6 +33,21 @@ python3 tools/detect_system.py --show-template record
 python3 tools/detect_system.py --show-template replay
 ```
 
+在真正改命令前，请先确认这 4 个值：
+
+- `leader` 当前 `tty`
+- `follower` 当前 `tty`
+- `top_camera` 当前 `dev`
+- `wrist_camera` 当前 `dev`
+
+建议操作顺序：
+
+1. 打开 [report.md](/home/xuan/so101_education/tools/devices/report.md)
+2. 在“相机固定身份参考”里确认 `top_camera` 和 `wrist_camera` 的 `by_path`
+3. 打开 `tools/devices/images/` 下的截图，确认哪一路俯视画面是 `top`，哪一路近距离手眼画面是 `wrist`
+4. 如果截图方向和角色名对不上，先改 [device_roles.json](/home/xuan/so101_education/tools/devices/device_roles.json)，再重新运行检测
+5. 只有当 `report.md` 里的角色、截图和当前 `dev` 都对上之后，再去改命令
+
 ### 2. 先完成遥操作
 
 ```bash
@@ -87,6 +102,7 @@ lerobot-replay \
 - 先看到稳定的主从遥操作画面
 - 再完成至少 1 组可用数据录制
 - 最后 replay 时从臂能复现已录制轨迹
+- 如果 `top` 和 `wrist` 画面方向不对，说明角色可能填反了，应先修正 `device_roles.json`
 
 ## 扩展任务：如果本组额外接入 side camera
 

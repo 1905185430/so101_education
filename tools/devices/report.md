@@ -1,21 +1,52 @@
 # SO-101 实验设备检测报告
 
-- 生成时间: `2026-05-07T17:23:32.353647`
+- 生成时间: `2026-05-07T17:45:26.891946`
 - 检测阶段: `all`
 
 ## 当前角色身份与端口
 
-- `leader`: missing | 当前tty: `未识别`
-- `follower`: missing | 当前tty: `未识别`
-- `top_camera`: missing | 当前dev: `未识别`
-- `wrist_camera`: missing | 当前dev: `未识别`
-- `side_camera`: missing | 当前dev: `未识别`
+- `leader`: missing | 当前tty: `未识别` | 固定身份(by-id): `未填写` | serial: `未识别`
+- `follower`: missing | 当前tty: `未识别` | 固定身份(by-id): `未填写` | serial: `未识别`
+- `top_camera`: missing | 当前dev: `未识别` | 固定身份(by-path): `未填写` | by-id: `未知` | image: `本次未生成截图`
+- `wrist_camera`: missing | 当前dev: `未识别` | 固定身份(by-path): `未填写` | by-id: `未知` | image: `本次未生成截图`
+- `side_camera`: missing | 当前dev: `未识别` | 固定身份(by-path): `未填写` | by-id: `未知` | image: `本次未生成截图`
 
 ## 三次课使用提示
 
 - 第一次课重点关注 `leader`、`follower` 和当前 `tty`，用于角色绑定与校准命令改写。相关背景先阅读 [01_so101_intro.md](/home/xuan/so101_education/primer/01_so101_intro.md) 和 [02_lerobot_intro.md](/home/xuan/so101_education/primer/02_lerobot_intro.md)。
 - 第二次课在第一次课基础上新增关注 `top_camera`、`wrist_camera` 和当前 `video` 节点，用于遥操作、录制与回放。`side_camera` 作为可选扩展视角。相关背景先阅读 [03_embodied_data_intro.md](/home/xuan/so101_education/primer/03_embodied_data_intro.md)。
 - 第三次课重点沿用第二次课的数据集命名与相机映射，并结合训练输出目录与 checkpoint 路径完成训练启动和 rollout。默认相机为 `top_camera + wrist_camera`，`side_camera` 为可选扩展。相关背景先阅读 [04_act_intro.md](/home/xuan/so101_education/primer/04_act_intro.md)。
+
+## 相机固定身份参考
+
+填写 camera 角色时，优先抄 `by_path` 到 `device_roles.json`；改写 LeRobot 命令时，再填写当前 `dev`。
+
+### top_camera
+
+- 当前 dev: `未识别`
+- 固定身份 by-path: `未填写`
+- by-id / serial: `未知` / `未识别`
+- 本次截图: `本次未生成截图`
+
+### wrist_camera
+
+- 当前 dev: `未识别`
+- 固定身份 by-path: `未填写`
+- by-id / serial: `未知` / `未识别`
+- 本次截图: `本次未生成截图`
+
+### side_camera
+
+- 当前 dev: `未识别`
+- 固定身份 by-path: `未填写`
+- by-id / serial: `未知` / `未识别`
+- 本次截图: `本次未生成截图`
+
+## 填写 device_roles.json 的建议来源
+
+- `leader`、`follower`：优先抄 `by-id` 到 `port`，再补 `serial`。
+- `top_camera`、`wrist_camera`、`side_camera`：优先抄 `by_path`，再补 `serial`。
+- 完成填写后，必须重新运行一次 `python3 tools/detect_system.py`，确认角色从 `missing` 变成 `connected`。
 
 ## 当前识别到的设备
 
@@ -26,10 +57,19 @@
 
 ### 相机
 
-- `Sonix_Technology_Co.__Ltd._USB2.0_HD_UVC_WebCam` | status=`disconnected` | dev=`/dev/video0` | by-path=`/dev/v4l/by-path/pci-0000:00:14.0-usb-0:7:1.0-video-index0`
-- `Orbbec_R__Orbbec_Gemini_335_CP15641000AW` | status=`disconnected` | dev=`/dev/video10` | by-path=`/dev/v4l/by-path/pci-0000:00:14.0-usb-0:1.4:1.4-video-index0`
-- `Orbbec_R__Orbbec_Gemini_335_CP1L44P0007K` | status=`disconnected` | dev=`/dev/video14` | by-path=`/dev/v4l/by-path/pci-0000:00:14.0-usb-0:1:1.4-video-index0`
-- `icSpring_icspring_camera_20240307110322` | status=`disconnected` | dev=`/dev/video2` | by-path=`/dev/v4l/by-path/pci-0000:00:14.0-usb-0:1.1:1.0-video-index0`
+- `Sonix_Technology_Co.__Ltd._USB2.0_HD_UVC_WebCam` | status=`connected` | dev=`/dev/video0` | by-path=`/dev/v4l/by-path/pci-0000:00:14.0-usb-0:7:1.0-video-index0` | by-id=`/dev/v4l/by-id/usb-Sonix_Technology_Co.__Ltd._USB2.0_HD_UVC_WebCam-video-index0` | image=`本次未生成截图`
+- `Orbbec_R__Orbbec_Gemini_335_CP15641000AW` | status=`connected` | dev=`/dev/video4` | by-path=`/dev/v4l/by-path/pci-0000:00:14.0-usb-0:1.4:1.0-video-index0` | by-id=`/dev/v4l/by-id/usb-Orbbec_R__Orbbec_Gemini_335_CP15641000AW-video-index0` | image=`本次未生成截图`
+- `Orbbec_R__Orbbec_Gemini_335_CP1L44P0007K` | status=`disconnected` | dev=`/dev/video14` | by-path=`/dev/v4l/by-path/pci-0000:00:14.0-usb-0:1:1.4-video-index0` | by-id=`/dev/v4l/by-id/usb-Orbbec_R__Orbbec_Gemini_335_CP1L44P0007K-video-index0` | image=`本次未生成截图`
+- `icSpring_icspring_camera_20240307110322` | status=`connected` | dev=`/dev/video2` | by-path=`/dev/v4l/by-path/pci-0000:00:14.0-usb-0:1.1:1.0-video-index0` | by-id=`/dev/v4l/by-id/usb-icSpring_icspring_camera_20240307110322-video-index0` | image=`本次未生成截图`
+- `pci-0000:00:14.0-usbv2-0:1.4:1.4` | status=`connected` | dev=`/dev/video10` | by-path=`/dev/v4l/by-path/pci-0000:00:14.0-usbv2-0:1.4:1.4-video-index0` | by-id=`` | image=`本次未生成截图`
+
+## 相机截图预览
+
+- `Sonix_Technology_Co.__Ltd._USB2.0_HD_UVC_WebCam` -> `本次未生成截图` | 说明: OpenCV 未安装，无法保存截图。
+- `Orbbec_R__Orbbec_Gemini_335_CP15641000AW` -> `本次未生成截图` | 说明: OpenCV 未安装，无法保存截图。
+- `Orbbec_R__Orbbec_Gemini_335_CP1L44P0007K` -> `本次未生成截图` | 说明: 本次未连接该相机，因此没有生成截图。
+- `icSpring_icspring_camera_20240307110322` -> `本次未生成截图` | 说明: OpenCV 未安装，无法保存截图。
+- `pci-0000:00:14.0-usbv2-0:1.4:1.4` -> `本次未生成截图` | 说明: OpenCV 未安装，无法保存截图。
 
 ## 检查结果
 
@@ -40,7 +80,7 @@
 - `PASS` ffmpeg: ffmpeg: 已找到
   提示: 如果后续实验会用到 ffmpeg，请先在 LeRobot 环境中完成安装。
 - `WARN` v4l2-ctl: v4l2-ctl: 未找到
-  提示: 如果后续实验会用到 v4l2-ctl，请先在 LeRobot 环境中完成安装。
+  提示: 如果缺少 v4l2-ctl，脚本仍会尝试识别相机，但无法完整读取格式与彩色流信息。
 - `WARN` nvidia-smi: nvidia-smi: 未找到
   提示: 如果后续实验会用到 nvidia-smi，请先在 LeRobot 环境中完成安装。
 - `WARN` lerobot-find-port: lerobot-find-port: 未找到
@@ -65,10 +105,18 @@
 
 ### camera
 
-- `WARN` cameras_detected: 已连接相机数量: 0
-  提示: 如果后续实验需要相机，请检查 USB 连接和供电。
+- `PASS` cameras_detected: 已连接相机数量: 4
+  提示: 下一步请结合 report.md 中的截图、by-path 和当前 dev 节点完成角色绑定。
 - `WARN` camera_color_stream: 支持彩色流的已连接相机数量: 0
-  提示: 如果采集或遥操作需要画面显示，请优先选择支持彩色流的相机。
+  提示: 如果采集或遥操作需要画面显示，请优先选择支持彩色流的相机；若格式未知，可先依靠截图是否成功判断。
+- `WARN` capture:Sonix_Technology_Co.__Ltd._USB2.0_HD_UVC_WebCam: Sonix_Technology_Co.__Ltd._USB2.0_HD_UVC_WebCam 未保存截图
+  提示: OpenCV 未安装，无法保存截图。
+- `WARN` capture:Orbbec_R__Orbbec_Gemini_335_CP15641000AW: Orbbec_R__Orbbec_Gemini_335_CP15641000AW 未保存截图
+  提示: OpenCV 未安装，无法保存截图。
+- `WARN` capture:icSpring_icspring_camera_20240307110322: icSpring_icspring_camera_20240307110322 未保存截图
+  提示: OpenCV 未安装，无法保存截图。
+- `WARN` capture:pci-0000:00:14.0-usbv2-0:1.4:1.4: pci-0000:00:14.0-usbv2-0:1.4:1.4 未保存截图
+  提示: OpenCV 未安装，无法保存截图。
 
 ### train
 

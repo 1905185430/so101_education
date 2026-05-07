@@ -23,6 +23,14 @@ python3 tools/detect_system.py
 
 - [report.md](/home/xuan/so101_education/tools/devices/report.md)
 - [report.json](/home/xuan/so101_education/tools/devices/report.json)
+- `tools/devices/images/`
+
+第一次运行后，建议依次看这 4 个位置：
+
+1. `report.md` 的“当前角色身份与端口”
+2. `report.md` 的“相机固定身份参考”
+3. `report.md` 的“填写 device_roles.json 的建议来源”
+4. `tools/devices/images/` 下每张截图对应的是哪一路相机
 
 ## 3. 参考命令
 
@@ -31,6 +39,16 @@ python3 tools/detect_system.py --write-roles-template
 python3 tools/detect_system.py
 lerobot-find-port
 ```
+
+建议的实际操作顺序是：
+
+1. 先运行 `python3 tools/detect_system.py --write-roles-template`
+2. 再运行 `python3 tools/detect_system.py`
+3. 打开 `report.md`，抄机械臂的 `by-id` 和相机的 `by_path`
+4. 把这些固定身份填入 `device_roles.json`
+5. 再运行一次 `python3 tools/detect_system.py`
+6. 确认 `leader`、`follower`、`top_camera`、`wrist_camera` 已从 `missing` 变成 `connected`
+7. 最后才去改 LeRobot 参考命令里的当前 `tty` / `dev`
 
 ## 4. 你需要修改的参数
 
@@ -72,6 +90,7 @@ lerobot-find-port
 - 再次运行 `python3 tools/detect_system.py` 时，报告中能看到 `leader` 和 `follower`
 - 如果相机已接好，报告中默认应能看到 `top_camera` 和 `wrist_camera`
 - 即使重插设备，工具仍然能恢复这些角色
+- 报告中的截图能帮助你确认哪一路画面是 `top`，哪一路画面是 `wrist`
 
 ## 6. 命令改写训练
 
@@ -85,10 +104,16 @@ lerobot-find-port
 - `<LEADER_PORT>` 应改成 `/dev/ttyACM1`
 - `<FOLLOWER_PORT>` 应改成 `/dev/ttyACM0`
 
+相机也是同样的逻辑：
+
+- `device_roles.json` 里优先填写 `top_camera.by_path` 和 `wrist_camera.by_path`
+- 真正改 LeRobot 命令时，再填写 `top_camera`、`wrist_camera` 当前的 `/dev/video*`
+
 ## 7. 自检问题
 
 - 为什么不能只记住 `/dev/ttyACM0` 是 leader？
 - `serial` 和 `by_path` 分别更适合描述哪类设备？
+- 如果断电重连后 `top_camera` 从 `/dev/video10` 变成 `/dev/video12`，你应该先改 `device_roles.json` 还是先改命令？
 
 ## 8. 本章提交要求
 

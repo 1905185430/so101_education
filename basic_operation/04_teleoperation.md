@@ -8,6 +8,21 @@
 python3 tools/detect_system.py --show-template teleoperate
 ```
 
+在改命令之前，先重新运行一次：
+
+```bash
+python3 tools/detect_system.py
+```
+
+然后确认这 4 个值：
+
+- `leader` 当前 `tty`
+- `follower` 当前 `tty`
+- `top_camera` 当前 `dev`
+- `wrist_camera` 当前 `dev`
+
+同时打开 `tools/devices/images/` 下的截图，确认俯视画面对应 `top_camera`，手眼近景对应 `wrist_camera`。如果截图方向不对，先修正 `device_roles.json`，不要直接硬改命令。
+
 ## 2. 参考命令
 
 ```bash
@@ -32,7 +47,7 @@ lerobot-teleoperate \
 ## 4. 修改后应达到的效果
 
 - 主臂移动时，从臂能同步跟随
-- 能看到 top 和 side 相机画面
+- 能看到 top 和 wrist 相机画面
 - 终端没有串口或相机设备找不到的报错
 
 ## 5. 命令改写训练
@@ -45,6 +60,8 @@ lerobot-teleoperate \
 - `wrist_camera -> /dev/video4`
 
 那么你应该把模板中的 4 个占位符全部替换，而不是只改机械臂端口。
+
+如果你发现截图中 `top_camera` 实际上是手腕视角，而 `wrist_camera` 实际上是俯视视角，说明角色填反了。这个时候应先回到 `device_roles.json` 调整绑定，再重新运行检测，而不是直接在命令里把两个名字硬记反。
 
 ## 6. 常见问题
 

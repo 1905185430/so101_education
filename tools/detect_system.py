@@ -41,6 +41,7 @@ CAMERA_ROLE_ORDER = ["top_camera", "wrist_camera", "side_camera"]
 SUPPORTED_STAGES = ["env", "robot", "camera", "train", "all"]
 SUPPORTED_FORMATS = ["text", "json", "markdown"]
 SUPPORTED_TEMPLATES = ["calibrate", "teleoperate", "record", "replay", "rollout"]
+COLOR_FORMATS = {"YUYV", "MJPG", "NV12", "RGB3", "BGR3"}
 
 
 def run_cmd(cmd: List[str], timeout: int = 3) -> subprocess.CompletedProcess:
@@ -72,6 +73,10 @@ def load_json(path: Path, default: Any) -> Any:
 def save_json(path: Path, data: Any):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
+
+
+def safe_name(value: str) -> str:
+    return "".join(ch if ch.isalnum() or ch in ("-", "_") else "_" for ch in value)
 
 
 def parse_args() -> argparse.Namespace:
@@ -114,7 +119,11 @@ def detect_env() -> List[Dict[str, str]]:
                 cmd,
                 "pass" if command_exists(cmd) else "warn",
                 f"{cmd}: {'已找到' if command_exists(cmd) else '未找到'}",
-                f"如果后续实验会用到 {cmd}，请先在 LeRobot 环境中完成安装。",
+                (
+                    "如果缺少 v4l2-ctl，脚本仍会尝试识别相机，但无法完整读取格式与彩色流信息。"
+                    if cmd == "v4l2-ctl"
+                    else f"如果后续实验会用到 {cmd}，请先在 LeRobot 环境中完成安装。"
+                ),
             )
         )
 
@@ -148,24 +157,13 @@ def make_check(name: str, status: str, detail: str, hint: str) -> Dict[str, str]
     return {"name": name, "status": status, "detail": detail, "hint": hint}
 
 
-def get_camera_info(dev_path: str) -> Dict[str, Any]:
-    info: Dict[str, Any] = {"dev": dev_path}
-
-    output = run_cmd(["v4l2-ctl", "--device", dev_path, "--info"]).stdout
-    for line in output.splitlines():
-        if "Card type" in line:
-            info["product"] = line.split(":")[-1].strip()
-            break
-    if not info.get("product"):
-        return {}
-
-    dev_name = Path(dev_path).name
+def find_video_links(dev_name: str) -> Tuple[str, str]:
+    by_id = ""
+    by_path = ""
     for link in Path("/dev/v4l/by-id").glob("*"):
         try:
             if link.resolve().name == dev_name:
-                info["by_id"] = str(link)
-                if "usb-" in link.name:
-                    info["serial"] = link.name.replace("usb-", "").split("-video-index")[0]
+                by_id = str(link)
                 break
         except Exception:
             pass
@@ -173,20 +171,56 @@ def get_camera_info(dev_path: str) -> Dict[str, Any]:
     for link in Path("/dev/v4l/by-path").glob("*"):
         try:
             if link.resolve().name == dev_name:
-                info["by_path"] = str(link)
+                by_path = str(link)
                 break
         except Exception:
             pass
+    return by_id, by_path
 
-    by_id = info.get("by_id", "")
-    if "-video-index" in by_id and not by_id.endswith("-index0"):
+
+def infer_camera_serial(dev_name: str, by_id: str, by_path: str) -> str:
+    if by_id and "usb-" in Path(by_id).name:
+        return Path(by_id).name.replace("usb-", "").split("-video-index")[0]
+    if by_path:
+        return Path(by_path).name.replace("-video-index0", "")
+    return dev_name
+
+
+def infer_camera_product(dev_name: str, by_id: str, by_path: str) -> str:
+    if by_id:
+        return Path(by_id).name.replace("usb-", "").split("-video-index")[0].replace("_", " ")
+    if by_path:
+        return Path(by_path).name.replace("-video-index0", " ").replace("_", " ")
+    return dev_name
+
+
+def get_camera_info(dev_path: str) -> Dict[str, Any]:
+    dev_name = Path(dev_path).name
+    by_id, by_path = find_video_links(dev_name)
+    if by_id and "-video-index" in by_id and not by_id.endswith("-index0"):
+        return {}
+    if by_path and "-video-index" in by_path and not by_path.endswith("-index0"):
         return {}
 
-    if not info.get("serial"):
-        info["serial"] = dev_name
+    info: Dict[str, Any] = {
+        "dev": dev_path,
+        "by_id": by_id,
+        "by_path": by_path,
+        "serial": infer_camera_serial(dev_name, by_id, by_path),
+        "product": infer_camera_product(dev_name, by_id, by_path),
+        "formats": [],
+        "color_stream": None,
+    }
 
-    info["formats"] = get_formats(dev_path)
-    info["color_stream"] = has_color_stream(info["formats"])
+    if command_exists("v4l2-ctl"):
+        output = run_cmd(["v4l2-ctl", "--device", dev_path, "--info"]).stdout
+        for line in output.splitlines():
+            if "Card type" in line:
+                info["product"] = line.split(":")[-1].strip()
+                break
+        info["formats"] = get_formats(dev_path)
+        info["color_stream"] = has_color_stream(info["formats"]) if info["formats"] else None
+
     return info
 
 
@@ -219,8 +253,7 @@ def get_formats(dev_path: str) -> List[Dict[str, Any]]:
 
 
 def has_color_stream(formats: List[Dict[str, Any]]) -> bool:
-    color_formats = {"YUYV", "MJPG", "NV12", "RGB3", "BGR3"}
-    return any(fmt.get("fourcc") in color_formats for fmt in formats)
+    return any(fmt.get("fourcc") in COLOR_FORMATS for fmt in formats)
 
 
 def get_arm_info(dev_path: str) -> Dict[str, Any]:
@@ -244,23 +277,21 @@ def get_arm_info(dev_path: str) -> Dict[str, Any]:
     return info
 
 
-def capture_image(dev_path: str, output_path: str) -> bool:
+def capture_image(dev_path: str, output_path: str, formats: List[Dict[str, Any]]) -> Tuple[bool, str]:
     try:
         import cv2  # type: ignore
     except Exception:
-        return False
+        return False, "OpenCV 未安装，无法保存截图。"
 
     try:
-        output = run_cmd(["v4l2-ctl", "--device", dev_path, "--list-formats-ext"]).stdout
-        color_formats = ["YUYV", "MJPG", "NV12", "RGB3", "BGR3"]
-        if not any(fmt in output for fmt in color_formats):
-            return False
+        if formats and not has_color_stream(formats):
+            return False, "当前相机未检测到彩色流，已跳过截图。"
 
         cap = cv2.VideoCapture(dev_path, cv2.CAP_V4L2)
         if not cap.isOpened():
             cap = cv2.VideoCapture(dev_path)
         if not cap.isOpened():
-            return False
+            return False, "OpenCV 无法打开相机，可能设备忙、权限不足或驱动异常。"
         cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
         cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
         for _ in range(5):
@@ -268,11 +299,12 @@ def capture_image(dev_path: str, output_path: str) -> bool:
         ret, frame = cap.read()
         cap.release()
         if ret and frame is not None:
-            cv2.imwrite(output_path, frame)
-            return True
-    except Exception:
-        return False
-    return False
+            if cv2.imwrite(output_path, frame):
+                return True, "截图已保存。"
+            return False, "已读取到图像，但写入图片文件失败。"
+        return False, "已打开相机，但未读取到有效图像帧。"
+    except Exception as exc:
+        return False, f"截图异常: {exc.__class__.__name__}"
 
 
 def load_history() -> Dict[str, Any]:
@@ -326,23 +358,69 @@ def detect_hardware(skip_capture: bool) -> Tuple[Dict[str, Any], Dict[str, Any],
     IMAGES_DIR.mkdir(parents=True, exist_ok=True)
 
     camera_checks: List[Dict[str, str]] = []
+    connected_cameras = [cam for cam in cameras.values() if cam.get("status") == "connected" and cam.get("dev")]
+
     if not skip_capture:
         for serial, cam in cameras.items():
             if cam.get("status") != "connected" or not cam.get("dev"):
+                cam["image"] = ""
+                cam["capture_status"] = "not_connected"
+                cam["capture_detail"] = "本次未连接该相机，因此没有生成截图。"
                 continue
-            img_name = f"{Path(cam['dev']).name}.jpg"
+            img_name = f"{safe_name(serial)}__{Path(cam['dev']).name}.jpg"
             img_path = IMAGES_DIR / img_name
-            if capture_image(cam["dev"], str(img_path)):
+            capture_ok, capture_detail = capture_image(cam["dev"], str(img_path), cam.get("formats", []))
+            if capture_ok:
                 cam["image"] = f"images/{img_name}"
+                cam["capture_status"] = "saved"
+                cam["capture_detail"] = capture_detail
+                camera_checks.append(
+                    make_check(
+                        f"capture:{serial}",
+                        "pass",
+                        f"{serial} 已保存截图到 {cam['image']}",
+                        "可打开 tools/devices/images/ 下的图片，确认它是 top、wrist 还是 side 视角。",
+                    )
+                )
             else:
+                cam["image"] = ""
+                cam["capture_status"] = "failed"
+                cam["capture_detail"] = capture_detail
                 camera_checks.append(
                     make_check(
                         f"capture:{serial}",
                         "warn",
                         f"{serial} 未保存截图",
-                        "如果需要截图，请确认相机支持彩色流并且 OpenCV 已安装。",
+                        capture_detail,
                     )
                 )
+    else:
+        camera_checks.append(
+            make_check(
+                "capture_skipped",
+                "pass",
+                "本次使用了 --skip-capture，未生成新的相机截图。",
+                "如果你需要用截图区分 top 和 wrist，请去掉 --skip-capture 后重新运行。",
+            )
+        )
+        for cam in cameras.values():
+            cam["image"] = ""
+            if cam.get("status") == "connected":
+                cam["capture_status"] = "skipped"
+                cam["capture_detail"] = "本次使用了 --skip-capture。"
+            else:
+                cam["capture_status"] = "not_connected"
+                cam["capture_detail"] = "本次未连接该相机，因此没有生成截图。"
+
+    if not connected_cameras and cameras:
+        camera_checks.append(
+            make_check(
+                "camera_history_only",
+                "warn",
+                f"检测到 {len(cameras)} 路历史相机记录，但本次没有任何相机处于 connected 状态。",
+                "这通常表示相机已经拔出，或当前环境缺少 v4l2-ctl / 相机驱动，导致只能看到历史记录。",
+            )
+        )
     return cameras, arms, camera_checks
 
 
@@ -480,14 +558,33 @@ def build_device_checks(
             )
         )
 
-    camera_checks.append(
-        make_check(
-            "cameras_detected",
-            "pass" if connected_cameras > 0 else "warn",
-            f"已连接相机数量: {connected_cameras}",
-            "如果后续实验需要相机，请检查 USB 连接和供电。",
+    if connected_cameras > 0:
+        camera_checks.append(
+            make_check(
+                "cameras_detected",
+                "pass",
+                f"已连接相机数量: {connected_cameras}",
+                "下一步请结合 report.md 中的截图、by-path 和当前 dev 节点完成角色绑定。",
+            )
         )
-    )
+    elif cameras:
+        camera_checks.append(
+            make_check(
+                "cameras_detected",
+                "warn",
+                "本次没有检测到已连接相机，但保留了历史相机记录。",
+                "请确认相机是否重新接入；如果只是缺少 v4l2-ctl，可先根据 by-path 和历史记录完成角色配置。",
+            )
+        )
+    else:
+        camera_checks.append(
+            make_check(
+                "cameras_detected",
+                "warn",
+                "本次未检测到任何相机。",
+                "如果后续实验需要相机，请检查 USB 连接、供电和驱动。",
+            )
+        )
     if args.expected_cameras is not None:
         camera_checks.append(
             make_check(
@@ -503,12 +600,51 @@ def build_device_checks(
         make_check(
             "camera_color_stream",
             "pass" if color_count > 0 else "warn",
-            f"支持彩色流的已连接相机数量: {color_count}",
-            "如果采集或遥操作需要画面显示，请优先选择支持彩色流的相机。",
+            (
+                f"支持彩色流的已连接相机数量: {color_count}"
+                if connected_cameras > 0
+                else "当前没有已连接相机，无法确认彩色流情况。"
+            ),
+            "如果采集或遥操作需要画面显示，请优先选择支持彩色流的相机；若格式未知，可先依靠截图是否成功判断。",
         )
     )
     camera_checks.extend(capture_checks)
     return {"robot": robot_checks, "camera": camera_checks}
+
+
+def build_role_identity_reference(role_summary: Dict[str, Any]) -> Dict[str, Any]:
+    arms_reference: Dict[str, Any] = {}
+    cameras_reference: Dict[str, Any] = {}
+
+    for role_name in ARM_ROLE_ORDER:
+        role = role_summary.get("arms", {}).get(role_name, {})
+        match = role.get("match", {})
+        spec = role.get("spec", {}) if isinstance(role.get("spec"), dict) else {}
+        arms_reference[role_name] = {
+            "status": role.get("status", "missing"),
+            "configured": role.get("configured", False),
+            "serial": match.get("serial") or spec.get("serial") or "未识别",
+            "current_tty": match.get("tty", "未识别"),
+            "fixed_port": match.get("port") or spec.get("port") or "未填写",
+        }
+
+    for role_name in CAMERA_ROLE_ORDER:
+        role = role_summary.get("cameras", {}).get(role_name, {})
+        match = role.get("match", {})
+        spec = role.get("spec", {}) if isinstance(role.get("spec"), dict) else {}
+        cameras_reference[role_name] = {
+            "status": role.get("status", "missing"),
+            "configured": role.get("configured", False),
+            "serial": match.get("serial") or spec.get("serial") or "未识别",
+            "current_dev": match.get("dev", "未识别"),
+            "fixed_by_path": match.get("by_path") or spec.get("by_path") or "未填写",
+            "by_id": match.get("by_id", "未知"),
+            "image": match.get("image", "本次未生成截图"),
+            "capture_status": match.get("capture_status", "unknown"),
+            "capture_detail": match.get("capture_detail", ""),
+        }
+
+    return {"arms": arms_reference, "cameras": cameras_reference}
 
 
 def build_placeholder_values(role_summary: Dict[str, Any]) -> Dict[str, str]:
@@ -763,11 +899,13 @@ def build_report(
             "connected": sum(1 for cam in cameras.values() if cam.get("status") == "connected"),
         },
     }
+    role_identity_reference = build_role_identity_reference(role_summary)
 
     next_steps = [
-        "先核对角色身份是否正确，再开始修改参考命令。",
-        "参考命令中的占位符必须由学生手动替换后再执行。",
-        "如果角色未绑定，请先编辑 tools/devices/device_roles.json。",
+        "先打开 tools/devices/report.md，核对 leader、follower、top_camera、wrist_camera 的当前端口与固定身份标识。",
+        "再打开 tools/devices/images/ 下的截图，确认哪一路画面是 top、哪一路画面是 wrist。",
+        "如果角色未绑定，请先把机械臂的 by-id / serial、相机的 by_path / serial 填入 tools/devices/device_roles.json。",
+        "角色确认无误后，再把参考命令中的当前 tty / video 占位符手动替换掉。",
     ]
 
     return {
@@ -781,6 +919,7 @@ def build_report(
         "checks": checks,
         "roles_config": roles_config,
         "roles": role_summary,
+        "role_identity_reference": role_identity_reference,
         "devices": {
             "arms": arms,
             "cameras": cameras,
@@ -791,11 +930,20 @@ def build_report(
     }
 
 
-def format_role_line(role_name: str, data: Dict[str, Any], key: str) -> str:
-    match = data.get("match", {})
-    current_value = match.get(key, "未识别")
-    status = data.get("status", "missing")
-    return f"- `{role_name}`: {status} | 当前{key}: `{current_value}`"
+def format_arm_role_line(role_name: str, data: Dict[str, Any]) -> str:
+    return (
+        f"- `{role_name}`: {data.get('status', 'missing')} | 当前tty: `{data.get('current_tty', '未识别')}`"
+        f" | 固定身份(by-id): `{data.get('fixed_port', '未填写')}` | serial: `{data.get('serial', '未识别')}`"
+    )
+
+
+def format_camera_role_line(role_name: str, data: Dict[str, Any]) -> str:
+    image = data.get("image") or "本次未生成截图"
+    return (
+        f"- `{role_name}`: {data.get('status', 'missing')} | 当前dev: `{data.get('current_dev', '未识别')}`"
+        f" | 固定身份(by-path): `{data.get('fixed_by_path', '未填写')}` | by-id: `{data.get('by_id', '未知')}`"
+        f" | image: `{image}`"
+    )
 
 
 def get_lab_focus_notes() -> List[str]:
@@ -815,19 +963,38 @@ def render_markdown(report: Dict[str, Any]) -> str:
     lines.append("")
     lines.append("## 当前角色身份与端口")
     lines.append("")
+    arm_reference = report["role_identity_reference"]["arms"]
+    camera_reference = report["role_identity_reference"]["cameras"]
     for role_name in ARM_ROLE_ORDER:
-        role_data = report["roles"]["arms"].get(role_name)
-        if role_data:
-            lines.append(format_role_line(role_name, role_data, "tty"))
+        lines.append(format_arm_role_line(role_name, arm_reference.get(role_name, {})))
     for role_name in CAMERA_ROLE_ORDER:
-        role_data = report["roles"]["cameras"].get(role_name)
-        if role_data:
-            lines.append(format_role_line(role_name, role_data, "dev"))
+        lines.append(format_camera_role_line(role_name, camera_reference.get(role_name, {})))
     lines.append("")
     lines.append("## 三次课使用提示")
     lines.append("")
     for note in get_lab_focus_notes():
         lines.append(f"- {note}")
+    lines.append("")
+    lines.append("## 相机固定身份参考")
+    lines.append("")
+    lines.append("填写 camera 角色时，优先抄 `by_path` 到 `device_roles.json`；改写 LeRobot 命令时，再填写当前 `dev`。")
+    lines.append("")
+    for role_name in CAMERA_ROLE_ORDER:
+        role = camera_reference.get(role_name, {})
+        lines.append(f"### {role_name}")
+        lines.append("")
+        lines.append(f"- 当前 dev: `{role.get('current_dev', '未识别')}`")
+        lines.append(f"- 固定身份 by-path: `{role.get('fixed_by_path', '未填写')}`")
+        lines.append(f"- by-id / serial: `{role.get('by_id', '未知')}` / `{role.get('serial', '未识别')}`")
+        lines.append(f"- 本次截图: `{role.get('image') or '本次未生成截图'}`")
+        if role.get("capture_detail"):
+            lines.append(f"- 截图说明: {role.get('capture_detail')}")
+        lines.append("")
+    lines.append("## 填写 device_roles.json 的建议来源")
+    lines.append("")
+    lines.append("- `leader`、`follower`：优先抄 `by-id` 到 `port`，再补 `serial`。")
+    lines.append("- `top_camera`、`wrist_camera`、`side_camera`：优先抄 `by_path`，再补 `serial`。")
+    lines.append("- 完成填写后，必须重新运行一次 `python3 tools/detect_system.py`，确认角色从 `missing` 变成 `connected`。")
     lines.append("")
     lines.append("## 当前识别到的设备")
     lines.append("")
@@ -845,9 +1012,19 @@ def render_markdown(report: Dict[str, Any]) -> str:
     for serial, cam in report["devices"]["cameras"].items():
         lines.append(
             f"- `{serial}` | status=`{cam.get('status')}` | dev=`{cam.get('dev', '未知')}` | by-path=`{cam.get('by_path', '未知')}`"
+            f" | by-id=`{cam.get('by_id', '未知')}` | image=`{cam.get('image') or '本次未生成截图'}`"
         )
     if not report["devices"]["cameras"]:
         lines.append("- 未检测到相机")
+    lines.append("")
+    lines.append("## 相机截图预览")
+    lines.append("")
+    for serial, cam in report["devices"]["cameras"].items():
+        lines.append(
+            f"- `{serial}` -> `{cam.get('image') or '本次未生成截图'}` | 说明: {cam.get('capture_detail', '无')}"
+        )
+    if not report["devices"]["cameras"]:
+        lines.append("- 本次没有相机截图")
     lines.append("")
     lines.append("## 检查结果")
     lines.append("")
@@ -891,28 +1068,43 @@ def render_text(report: Dict[str, Any]) -> str:
     lines.append(f"时间: {report['timestamp']}")
     lines.append("")
     lines.append("角色身份与当前端口:")
+    arm_reference = report["role_identity_reference"]["arms"]
+    camera_reference = report["role_identity_reference"]["cameras"]
     for role_name in ARM_ROLE_ORDER:
-        role_data = report["roles"]["arms"].get(role_name)
-        if role_data:
-            match = role_data.get("match", {})
-            lines.append(f"  - {role_name}: {role_data.get('status')} | tty={match.get('tty', '未识别')}")
+        role_data = arm_reference.get(role_name, {})
+        lines.append(
+            f"  - {role_name}: {role_data.get('status')} | tty={role_data.get('current_tty', '未识别')}"
+            f" | by-id={role_data.get('fixed_port', '未填写')}"
+        )
     for role_name in CAMERA_ROLE_ORDER:
-        role_data = report["roles"]["cameras"].get(role_name)
-        if role_data:
-            match = role_data.get("match", {})
-            lines.append(f"  - {role_name}: {role_data.get('status')} | dev={match.get('dev', '未识别')}")
+        role_data = camera_reference.get(role_name, {})
+        lines.append(
+            f"  - {role_name}: {role_data.get('status')} | dev={role_data.get('current_dev', '未识别')}"
+            f" | by-path={role_data.get('fixed_by_path', '未填写')} | image={role_data.get('image') or '本次未生成截图'}"
+        )
     lines.append("")
     lines.append("三次课使用提示:")
     for note in get_lab_focus_notes():
         lines.append(f"  - {note}")
     lines.append("")
+    lines.append("填写 device_roles.json 时的建议:")
+    lines.append("  - 机械臂优先抄 by-id / serial")
+    lines.append("  - 相机优先抄 by-path / serial")
+    lines.append("  - 角色文件改完后必须重新运行一次检测")
+    lines.append("")
     lines.append("当前识别到的设备:")
     for serial, arm in report["devices"]["arms"].items():
         lines.append(f"  - arm {serial}: status={arm.get('status')} tty={arm.get('tty', '未知')} by-id={arm.get('port', '未知')}")
     for serial, cam in report["devices"]["cameras"].items():
-        lines.append(f"  - camera {serial}: status={cam.get('status')} dev={cam.get('dev', '未知')} by-path={cam.get('by_path', '未知')}")
+        lines.append(
+            f"  - camera {serial}: status={cam.get('status')} dev={cam.get('dev', '未知')}"
+            f" by-path={cam.get('by_path', '未知')} by-id={cam.get('by_id', '未知')} image={cam.get('image') or '本次未生成截图'}"
+        )
     if not report["devices"]["arms"] and not report["devices"]["cameras"]:
         lines.append("  - 未检测到设备")
+    lines.append("")
+    lines.append(f"截图目录: {IMAGES_DIR}")
+    lines.append(f"Markdown 报告: {REPORT_MD_PATH}")
     lines.append("")
     lines.append("检查摘要:")
     summary = report["summary"]["checks"]
@@ -943,6 +1135,7 @@ def build_device_exports(report: Dict[str, Any]) -> Tuple[Dict[str, Any], Dict[s
     full = {
         "timestamp": timestamp,
         "roles": report["roles"],
+        "role_identity_reference": report["role_identity_reference"],
         "arms": report["devices"]["arms"],
         "cameras": report["devices"]["cameras"],
         "summary": report["summary"],
@@ -953,6 +1146,7 @@ def build_device_exports(report: Dict[str, Any]) -> Tuple[Dict[str, Any], Dict[s
     simple = {
         "timestamp": timestamp,
         "roles": report["roles"],
+        "role_identity_reference": report["role_identity_reference"],
         "arms": report["devices"]["arms"],
         "cameras": simple_cameras,
         "summary": report["summary"],

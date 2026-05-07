@@ -9,6 +9,21 @@ python3 tools/detect_system.py --show-template record
 python3 tools/detect_system.py --show-template replay
 ```
 
+正式录制前，先运行一次：
+
+```bash
+python3 tools/detect_system.py
+```
+
+然后确认这 4 个值：
+
+- `leader` 当前 `tty`
+- `follower` 当前 `tty`
+- `top_camera` 当前 `dev`
+- `wrist_camera` 当前 `dev`
+
+如果截图显示 `top` / `wrist` 方向不对，先修正 `device_roles.json`，再开始录制。不要带着错误角色去采数据。
+
 ## 2. 参考命令：采集
 
 ```bash
@@ -40,6 +55,7 @@ lerobot-record \
 - 完成多条示教轨迹采集
 - 生成本地数据集目录
 - 后续可以用于 replay 和 ACT 训练
+- `top` 和 `wrist` 两路画面方向与角色名一致
 
 ## 5. 参考命令：回放
 
