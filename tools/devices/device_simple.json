@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-05-07T19:06:20.504547",
+  "timestamp": "2026-05-07T19:14:59.472529",
   "device_simple_path": "/home/xuan/so101_education/tools/devices/device_simple.json",
   "images_dir": "/home/xuan/so101_education/tools/devices/images",
   "arms": {
@@ -35,23 +35,18 @@
       "capture_status": "saved",
       "capture_detail": "ffmpeg 已保存截图。"
     },
-    "pci-0000:00:14.0-usbv2-0:1.4:1.4": {
+    "pci-0000:00:14.0-usb-0:1.4:1.4": {
       "dev": "/dev/video10",
       "by_id": "",
-      "by_path": "/dev/v4l/by-path/pci-0000:00:14.0-usbv2-0:1.4:1.4-video-index0",
-      "serial": "pci-0000:00:14.0-usbv2-0:1.4:1.4",
-      "product": "pci-0000:00:14.0-usbv2-0:1.4:1.4 ",
-      "color_stream": true,
-      "stream_info": {
-        "codec_name": "rawvideo",
-        "pix_fmt": "yuyv422",
-        "width": 640,
-        "height": 480
-      },
+      "by_path": "/dev/v4l/by-path/pci-0000:00:14.0-usb-0:1.4:1.4-video-index0",
+      "serial": "pci-0000:00:14.0-usb-0:1.4:1.4",
+      "product": "pci-0000:00:14.0-usb-0:1.4:1.4 ",
+      "color_stream": null,
+      "stream_info": {},
       "status": "connected",
       "image": "",
       "capture_status": "failed",
-      "capture_detail": "ffmpeg 无法从该相机节点抓取有效彩色画面。"
+      "capture_detail": "ffmpeg 无法抓取有效彩色画面: Error opening input files: Input/output error"
     },
     "icSpring_icspring_camera_20240307110322": {
       "dev": "/dev/video2",
@@ -77,17 +72,12 @@
       "by_path": "/dev/v4l/by-path/pci-0000:00:14.0-usb-0:1.4:1.0-video-index0",
       "serial": "Orbbec_R__Orbbec_Gemini_335_CP15641000AW",
       "product": "Orbbec R  Orbbec Gemini 335 CP15641000AW",
-      "color_stream": false,
-      "stream_info": {
-        "codec_name": "rawvideo",
-        "pix_fmt": "gray16le",
-        "width": 640,
-        "height": 480
-      },
+      "color_stream": null,
+      "stream_info": {},
       "status": "connected",
       "image": "",
       "capture_status": "failed",
-      "capture_detail": "当前节点像素格式为 gray16le，更像深度/灰度/原始流，已跳过截图。"
+      "capture_detail": "ffmpeg 无法抓取有效彩色画面: Error opening input files: Input/output error"
     }
   },
   "summary": {

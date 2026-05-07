@@ -78,31 +78,33 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def find_video_links(dev_name: str) -> Tuple[str, str]:
-    by_id = ""
-    by_path = ""
+def collect_matching_links(base_dir: str, dev_name: str) -> List[str]:
+    matches: List[str] = []
+    path = Path(base_dir)
+    if not path.exists():
+        return matches
+    for link in path.glob("*"):
+        try:
+            if link.resolve().name == dev_name:
+                matches.append(str(link))
+        except Exception:
+            pass
+    return sorted(matches)
 
-    by_id_dir = Path("/dev/v4l/by-id")
-    if by_id_dir.exists():
-        for link in by_id_dir.glob("*"):
-            try:
-                if link.resolve().name == dev_name:
-                    by_id = str(link)
-                    break
-            except Exception:
-                pass
 
-    by_path_dir = Path("/dev/v4l/by-path")
-    if by_path_dir.exists():
-        for link in by_path_dir.glob("*"):
-            try:
-                if link.resolve().name == dev_name:
-                    by_path = str(link)
-                    break
-            except Exception:
-                pass
+def pick_preferred_link(matches: List[str]) -> str:
+    for link in matches:
+        if link.endswith("index0"):
+            return link
+    return matches[0] if matches else ""
 
-    return by_id, by_path
+
+def find_video_links(dev_name: str) -> Tuple[str, str, List[str], List[str]]:
+    by_id_matches = collect_matching_links("/dev/v4l/by-id", dev_name)
+    by_path_matches = collect_matching_links("/dev/v4l/by-path", dev_name)
+    by_id = pick_preferred_link(by_id_matches)
+    by_path = pick_preferred_link(by_path_matches)
+    return by_id, by_path, by_id_matches, by_path_matches
 
 
 def infer_camera_serial(dev_name: str, by_id: str, by_path: str) -> str:
@@ -203,17 +205,23 @@ def is_likely_color_camera(formats: List[Dict[str, Any]], stream_info: Dict[str,
 
 def get_camera_info(dev_path: str) -> Dict[str, Any]:
     dev_name = Path(dev_path).name
-    by_id, by_path = find_video_links(dev_name)
+    by_id, by_path, by_id_matches, by_path_matches = find_video_links(dev_name)
 
     if by_id and "-video-index" in by_id and not by_id.endswith("-index0"):
         return {}
     if by_path and "-video-index" in by_path and not by_path.endswith("-index0"):
+        return {}
+    if by_id_matches and not any(link.endswith("index0") for link in by_id_matches):
+        return {}
+    if by_path_matches and not any(link.endswith("index0") for link in by_path_matches):
         return {}
 
     info: Dict[str, Any] = {
         "dev": dev_path,
         "by_id": by_id,
         "by_path": by_path,
+        "by_id_matches": by_id_matches,
+        "by_path_matches": by_path_matches,
         "serial": infer_camera_serial(dev_name, by_id, by_path),
         "product": infer_camera_product(dev_name, by_id, by_path),
         "formats": [],
@@ -235,6 +243,8 @@ def get_camera_info(dev_path: str) -> Dict[str, Any]:
     likely_color = is_likely_color_camera(info["formats"], info["stream_info"])
     if likely_color is not None:
         info["color_stream"] = likely_color
+    if not info["by_id"] and not info["by_path"] and not info["stream_info"]:
+        return {}
 
     return info
 
@@ -265,7 +275,7 @@ def get_arm_info(dev_path: str) -> Dict[str, Any]:
 def capture_image_ffmpeg(dev_path: str, output_path: str) -> Tuple[bool, str]:
     if not shutil.which("ffmpeg"):
         return False, "ffmpeg 未安装，无法保存截图。"
-    result = run_cmd(
+    attempts = [
         [
             "ffmpeg",
             "-hide_banner",
@@ -280,10 +290,53 @@ def capture_image_ffmpeg(dev_path: str, output_path: str) -> Tuple[bool, str]:
             "1",
             output_path,
         ],
-        timeout=10,
-    )
-    if result.returncode == 0 and Path(output_path).exists():
-        return True, "ffmpeg 已保存截图。"
+        [
+            "ffmpeg",
+            "-hide_banner",
+            "-loglevel",
+            "error",
+            "-y",
+            "-f",
+            "video4linux2",
+            "-input_format",
+            "yuyv422",
+            "-video_size",
+            "640x480",
+            "-i",
+            dev_path,
+            "-frames:v",
+            "1",
+            output_path,
+        ],
+        [
+            "ffmpeg",
+            "-hide_banner",
+            "-loglevel",
+            "error",
+            "-y",
+            "-f",
+            "video4linux2",
+            "-input_format",
+            "mjpeg",
+            "-video_size",
+            "640x480",
+            "-i",
+            dev_path,
+            "-frames:v",
+            "1",
+            output_path,
+        ],
+    ]
+    errors: List[str] = []
+    for cmd in attempts:
+        result = run_cmd(cmd, timeout=10)
+        if result.returncode == 0 and Path(output_path).exists():
+            return True, "ffmpeg 已保存截图。"
+        err = (result.stderr or result.stdout or "").strip()
+        if err:
+            errors.append(err.splitlines()[-1])
+    if errors:
+        return False, f"ffmpeg 无法抓取有效彩色画面: {' | '.join(dict.fromkeys(errors))}"
     return False, "ffmpeg 无法从该相机节点抓取有效彩色画面。"
 
 
@@ -416,7 +469,7 @@ def detect_hardware(skip_capture: bool) -> Tuple[Dict[str, Any], Dict[str, Any]]
 def build_device_simple(cameras: Dict[str, Any], arms: Dict[str, Any]) -> Dict[str, Any]:
     simple_cameras: Dict[str, Any] = {}
     for serial, camera in cameras.items():
-        simple_cameras[serial] = {k: v for k, v in camera.items() if k != "formats"}
+        simple_cameras[serial] = {k: v for k, v in camera.items() if k not in {"formats", "by_id_matches", "by_path_matches"}}
 
     return {
         "timestamp": datetime.now().isoformat(),
