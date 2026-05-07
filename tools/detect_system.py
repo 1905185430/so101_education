@@ -795,6 +795,14 @@ def format_role_line(role_name: str, data: Dict[str, Any], key: str) -> str:
     return f"- `{role_name}`: {status} | 当前{key}: `{current_value}`"
 
 
+def get_lab_focus_notes() -> List[str]:
+    return [
+        "第一次课重点关注 `leader`、`follower` 和当前 `tty`，用于角色绑定与校准命令改写。",
+        "第二次课在第一次课基础上新增关注 `top_camera`、`side_camera` 和当前 `video` 节点，用于遥操作、录制与回放。",
+        "第三次课重点沿用第二次课的数据集命名与相机映射，并结合训练输出目录与 checkpoint 路径完成训练启动和 rollout。",
+    ]
+
+
 def render_markdown(report: Dict[str, Any]) -> str:
     lines: List[str] = []
     lines.append("# SO-101 实验设备检测报告")
@@ -812,6 +820,11 @@ def render_markdown(report: Dict[str, Any]) -> str:
         role_data = report["roles"]["cameras"].get(role_name)
         if role_data:
             lines.append(format_role_line(role_name, role_data, "dev"))
+    lines.append("")
+    lines.append("## 三次课使用提示")
+    lines.append("")
+    for note in get_lab_focus_notes():
+        lines.append(f"- {note}")
     lines.append("")
     lines.append("## 当前识别到的设备")
     lines.append("")
@@ -885,6 +898,10 @@ def render_text(report: Dict[str, Any]) -> str:
         if role_data:
             match = role_data.get("match", {})
             lines.append(f"  - {role_name}: {role_data.get('status')} | dev={match.get('dev', '未识别')}")
+    lines.append("")
+    lines.append("三次课使用提示:")
+    for note in get_lab_focus_notes():
+        lines.append(f"  - {note}")
     lines.append("")
     lines.append("当前识别到的设备:")
     for serial, arm in report["devices"]["arms"].items():

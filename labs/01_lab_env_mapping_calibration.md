@@ -1,0 +1,92 @@
+# 第一次课：环境验证、设备映射与主从臂校准
+
+本次课的目标是让学生在已预装好的 LeRobot 环境中，学会读取检测报告、绑定设备角色，并根据当前端口改写主从臂校准命令。
+
+## 课前准备
+
+- 教师已完成 LeRobot 与依赖预装
+- 学生座位上的主臂、从臂已经接入电脑
+- 相机可以接入，但第一次课不要求完成相机实验
+
+## 课内目标
+
+- 会运行 `python3 tools/detect_system.py`
+- 会看懂 `leader` 和 `follower` 的当前端口
+- 会填写 `device_roles.json`
+- 会把 `<LEADER_PORT>`、`<FOLLOWER_PORT>` 改写成自己的端口
+- 完成主从臂校准
+
+## 课内步骤
+
+### 1. 验证环境
+
+```bash
+lerobot-find-port --help
+lerobot-calibrate --help
+python3 tools/detect_system.py --stage env
+```
+
+### 2. 识别设备并绑定角色
+
+```bash
+python3 tools/detect_system.py --write-roles-template
+python3 tools/detect_system.py
+lerobot-find-port
+```
+
+重点查看：
+
+- `leader`
+- `follower`
+- 当前 `tty`
+- `tools/devices/report.md`
+
+### 3. 参考命令
+
+```bash
+lerobot-calibrate \
+  --teleop.type=so101_leader \
+  --teleop.port=<LEADER_PORT>
+
+lerobot-calibrate \
+  --robot.type=so101_follower \
+  --robot.port=<FOLLOWER_PORT>
+```
+
+## 你需要修改的参数
+
+- `<LEADER_PORT>`：改成检测报告中 `leader` 当前对应的 `tty`
+- `<FOLLOWER_PORT>`：改成检测报告中 `follower` 当前对应的 `tty`
+
+## 修改后应达到的效果
+
+- 主臂和从臂分别完成零位校准
+- 终端出现保存结果或校准完成提示
+- 后续遥操作时主从臂没有明显零位偏差
+
+## 课后任务
+
+- 复查一次 `device_roles.json`
+- 用文字说明 `serial`、`by-id`、`ttyACM*` 三者的区别
+- 如果课堂上没接相机，课后预习 `top_camera` 和 `side_camera` 的角色概念
+
+## 提交要求
+
+- `tools/devices/report.md`
+- 填写后的 `tools/devices/device_roles.json`
+- 两条改写后的校准命令
+- 一张校准成功截图
+
+## 评分点
+
+- 能正确识别 `leader` 和 `follower`
+- 能正确填写角色配置文件
+- 能手动改写 `<LEADER_PORT>` 和 `<FOLLOWER_PORT>`
+- 能完成校准并保留结果
+
+## 细化参考
+
+- [00. 如何从检测结果改写命令](/home/xuan/so101_education/basic_operation/00_command_template_guide.md)
+- [01. 环境搭建与 CLI 验证](/home/xuan/so101_education/basic_operation/01_environment_setup.md)
+- [02. 设备映射与角色绑定](/home/xuan/so101_education/basic_operation/02_arm_detection.md)
+- [03. 主从臂校准](/home/xuan/so101_education/basic_operation/03_calibration.md)

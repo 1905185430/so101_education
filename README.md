@@ -1,16 +1,38 @@
-# SO-101 LeRobot 教学实验书
+# SO-101 LeRobot 三次课实验书
 
-这套仓库面向课堂教学，目标不是替学生直接生成可执行命令，而是帮助学生根据自己机器上的硬件映射，正确改写 LeRobot 命令。
+这套仓库面向课堂教学，当前学生主入口已经重组为 3 次课、3 个实验。目标仍然不变：学生根据自己机器上的硬件映射，手动改写 LeRobot 参考命令，而不是直接复制成品命令。
 
-## 学习流程
+## 当前版本
 
-每次做实验都按同一条流程走：
+- 当前教学主线：`三次课版`
+- 历史稳定版本标签：`v1-eight-chapters`
+- 历史版本含义：保留原始 `8` 章节拆分结构，便于教师回溯和细化备课
 
-1. 运行检测工具识别当前硬件
-2. 查看 `leader`、`follower`、`top_camera`、`side_camera` 的当前端口
-3. 打开本章的参考命令模板
-4. 手动替换占位符
-5. 执行命令并记录结果
+## 三次课主入口
+
+1. [第一次课：环境验证、设备映射与主从臂校准](labs/01_lab_env_mapping_calibration.md)
+2. [第二次课：遥操作、数据采集与回放](labs/02_lab_teleop_record_replay.md)
+3. [第三次课：ACT 训练启动与策略部署](labs/03_lab_act_train_deploy.md)
+
+## 课程节奏
+
+### 第一次课
+
+- 课前环境已经预装完成
+- 课堂只验证 CLI、识别硬件、绑定角色、完成校准
+- 课堂成果是“能看懂报告并写对主从臂命令”
+
+### 第二次课
+
+- 重点改写相机相关占位符
+- 课堂完成遥操作、录制数据、回放验证
+- 课堂成果是“能采到一份可回放的数据”
+
+### 第三次课
+
+- 课堂启动 ACT 训练并理解输出目录和日志
+- 训练收敛允许课后继续
+- 课堂或课后使用 checkpoint 完成 rollout
 
 ## 核心工具
 
@@ -26,10 +48,10 @@ python3 tools/detect_system.py --show-template rollout
 检测工具会输出：
 
 - 当前识别到的设备
-- 角色身份与当前端口的映射
+- `leader`、`follower`、`top_camera`、`side_camera` 的当前端口
 - `tools/devices/report.md`
 - 带占位符的参考命令模板
-- 学生需要自己替换的位置
+- 学生本机应参考的候选替换值
 
 如果第一次使用本仓库，可以先生成角色配置模板：
 
@@ -41,8 +63,6 @@ python3 tools/detect_system.py --write-roles-template
 
 ## 统一角色名
 
-全文统一使用下面这组名字：
-
 - `leader`
 - `follower`
 - `top_camera`
@@ -50,8 +70,6 @@ python3 tools/detect_system.py --write-roles-template
 - `wrist_camera`
 
 ## 统一占位符
-
-学生改写命令时，优先关注这些占位符：
 
 - `<LEADER_PORT>`
 - `<FOLLOWER_PORT>`
@@ -61,7 +79,15 @@ python3 tools/detect_system.py --write-roles-template
 - `<OUTPUT_DIR>`
 - `<CHECKPOINT_PATH>`
 
-## 实验目录
+## 学生提交要求
+
+- 学生提交自己修改后的命令，而不是原始模板
+- 学生说明自己改了哪些参数、这些值来自哪条检测结果
+- 每次课至少保留一次终端截图或 `report.md`
+
+## 附录与细化参考
+
+下面这些文档保留为细化章节，用于教师备课或学生补查：
 
 1. [00. 如何从检测结果改写命令](basic_operation/00_command_template_guide.md)
 2. [01. 环境搭建与 CLI 验证](basic_operation/01_environment_setup.md)
@@ -71,12 +97,6 @@ python3 tools/detect_system.py --write-roles-template
 6. [05. 数据采集与回放](basic_operation/05_dataset_recording.md)
 7. [06. ACT 训练](basic_operation/06_act_training.md)
 8. [07. 策略部署](basic_operation/07_policy_deployment.md)
-
-## 课堂要求
-
-- 学生提交自己修改后的命令，而不是原始模板
-- 学生说明自己改了哪些参数、为什么这样改
-- 每章完成后保留终端截图或 `report.md` 作为实验记录
 
 ## 推荐参考
 
