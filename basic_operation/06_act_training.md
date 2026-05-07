@@ -10,7 +10,7 @@
 可以先运行：
 
 ```bash
-python3 tools/detect_system.py --stage train
+python3 tools/detect_system.py
 ```
 
 ## 2. 参考命令

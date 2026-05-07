@@ -1,6 +1,6 @@
 # 第三次课：ACT 训练启动与策略部署
 
-本次课的目标是让学生基于第二次课采集的数据，改写训练命令，并沿着检测工具给出的基线完成 rollout，同时看懂训练固定参数、输出目录和 checkpoint 的关系。
+本次课的目标是让学生基于第二次课采集的数据，改写训练命令，并根据当前设备扫描结果完成 rollout，同时看懂训练固定参数、输出目录和 checkpoint 的关系。
 
 ## 先修导学
 
@@ -26,8 +26,7 @@
 ### 1. 先检查训练环境
 
 ```bash
-python3 tools/detect_system.py --stage train
-python3 tools/detect_system.py --show-template rollout
+python3 tools/detect_system.py
 ```
 
 ### 2. 启动 ACT 训练
@@ -58,11 +57,11 @@ lerobot-train \
 
 ### 4. rollout 前先确认
 
-- `follower`、`top_camera`、`wrist_camera` 仍然是这次真实连接的角色
-- 自动填入的 checkpoint 路径只是草稿，执行前要对照本组训练输出确认
+- `follower`、`top_camera`、`wrist_camera` 仍然是这次真实连接的设备
+- checkpoint 路径要对照本组训练输出确认
 - 如果你临时换了设备或重插相机，先重新运行一次检测，不要直接沿用旧命令
 
-确认完以后，再执行报告里的“可直接执行命令”。下面保留教学版参考命令，用于理解 follower、camera 和 checkpoint 参数之间的关系。
+确认完以后，再执行下面这条命令。
 
 ```bash
 lerobot-rollout \

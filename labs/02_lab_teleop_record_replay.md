@@ -1,6 +1,6 @@
 # 第二次课：遥操作、数据采集与回放
 
-本次课的目标是让学生在已经完成角色绑定和校准的基础上，沿着检测工具给出的基线完成遥操作、录制和回放验证，并在关键节点看懂相机角色、默认值和回放含义。
+本次课的目标是让学生在已经完成主从臂判断和校准的基础上，根据 `device_simple.json` 和截图完成遥操作、录制和回放验证。
 
 ## 先修导学
 
@@ -16,8 +16,7 @@
 
 ## 课内目标
 
-- 会看懂检测报告中的 `top_camera` 和 `wrist_camera`
-- 会判断什么时候可以直接使用检测工具给出的命令
+- 会看懂 `device_simple.json` 里的 `top_camera` 和 `wrist_camera`
 - 会在需要时改写 `<TOP_CAMERA_DEV>` 和 `<WRIST_CAMERA_DEV>`
 - 能完成遥操作
 - 能录制至少一组有效 episode
@@ -29,9 +28,6 @@
 
 ```bash
 python3 tools/detect_system.py
-python3 tools/detect_system.py --show-template teleoperate
-python3 tools/detect_system.py --show-template record
-python3 tools/detect_system.py --show-template replay
 ```
 
 在真正改命令前，请先确认这 4 个值：
@@ -43,28 +39,16 @@ python3 tools/detect_system.py --show-template replay
 
 建议操作顺序：
 
-1. 打开 [report.md](/home/xuan/so101_education/tools/devices/report.md)
-2. 在“相机固定身份参考”里确认 `top_camera` 和 `wrist_camera` 的 `by_path`
+1. 打开 [device_simple.json](/home/xuan/so101_education/tools/devices/device_simple.json)
+2. 在 `cameras` 里确认 `dev` 和 `by_path`
 3. 打开 `tools/devices/images/` 下的截图，确认哪一路俯视画面是 `top`，哪一路近距离手眼画面是 `wrist`
-4. 如果截图方向和角色名对不上，先改 [device_roles.json](/home/xuan/so101_education/tools/devices/device_roles.json)，再重新运行检测
-5. 只有当 `report.md` 里的角色、截图和当前 `dev` 都对上之后，再去改命令
-
-如果这一步里你看到：
-
-- `top_camera: missing`
-- `wrist_camera: missing`
-
-先不要直接改相机命令。说明设备还没绑定到角色，请先看：
-
-- [02A. 如何填写 device_roles.json](/home/xuan/so101_education/basic_operation/02a_device_roles_filling_guide.md)
+4. 只有当截图判断和当前 `dev` 都对上之后，再去改命令
 
 ### 2. 遥操作前先确认
 
 - `top_camera` 是全局俯视，`wrist_camera` 是近手视角
-- 如果截图和角色名对不上，先修 `device_roles.json`，不要直接改命令里的名字
-- 只有当角色、截图和当前 `dev` 都一致时，才执行报告里的“可直接执行命令”
-
-下面保留教学版参考命令，便于你执行后回看这些参数来自哪里。
+- 如果截图和角色名对不上，先重新确认相机角色，不要直接改命令里的名字
+- 只有当截图判断和当前 `dev` 都一致时，才执行下面这条命令
 
 ```bash
 lerobot-teleoperate \
@@ -82,7 +66,7 @@ lerobot-teleoperate \
 - 执行前先确认这些值是否符合本组任务
 - 录制时要把“画面角色正确”当成必要前提，不要带着反了的 `top/wrist` 去采集
 
-确认完以后，再执行报告里的“可直接执行命令”。
+确认完以后，再执行下面这条命令。
 
 ```bash
 lerobot-record \
@@ -104,7 +88,7 @@ lerobot-record \
 - `replay` 验证的是“数据是否可复现”，不是只看命令能否运行
 - 执行前确认数据集名和 episode 编号是否符合本组实际
 
-确认完以后，再执行报告里的“可直接执行命令”。下面保留教学版参考命令，便于你回看参数来源。
+确认完以后，再执行下面这条命令。
 
 ```bash
 lerobot-replay \
@@ -129,7 +113,7 @@ lerobot-replay \
 - 先看到稳定的主从遥操作画面
 - 再完成至少 1 组可用数据录制
 - 最后 replay 时从臂能复现已录制轨迹
-- 如果 `top` 和 `wrist` 画面方向不对，说明角色可能填反了，应先修正 `device_roles.json`
+- 如果 `top` 和 `wrist` 画面方向不对，说明你的角色判断可能反了，应先重新确认截图
 
 ## 扩展任务：如果本组额外接入 side camera
 
@@ -158,6 +142,6 @@ lerobot-replay \
 
 ## 细化参考
 
-- [02A. 如何填写 device_roles.json](/home/xuan/so101_education/basic_operation/02a_device_roles_filling_guide.md)
+- [02A. 如何根据截图和 device_simple 判断设备角色](/home/xuan/so101_education/basic_operation/02a_device_roles_filling_guide.md)
 - [04. 带相机的遥操作](/home/xuan/so101_education/basic_operation/04_teleoperation.md)
 - [05. 数据采集与回放](/home/xuan/so101_education/basic_operation/05_dataset_recording.md)

@@ -48,7 +48,7 @@ lerobot-calibrate --help
 lerobot-record --help
 lerobot-train --help
 lerobot-rollout --help
-python3 tools/detect_system.py --stage env
+python3 tools/detect_system.py
 ```
 
 ## 7. 自检问题
@@ -59,7 +59,7 @@ python3 tools/detect_system.py --stage env
 ## 8. 本章提交要求
 
 - 提交环境安装后的帮助命令截图
-- 提交一次 `python3 tools/detect_system.py --stage env` 的输出
+- 提交一次 `python3 tools/detect_system.py` 的输出
 
 ---
 **上一节：** [00. 如何从检测结果改写命令](00_command_template_guide.md)

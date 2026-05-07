@@ -2,10 +2,10 @@
 
 本章的目标是根据 follower 端口、相机节点和 checkpoint 路径完成部署，并在执行前确认角色映射和 checkpoint 选择都正确。
 
-## 1. 先查看模板
+## 1. 先查看当前设备
 
 ```bash
-python3 tools/detect_system.py --show-template rollout
+python3 tools/detect_system.py
 ```
 
 执行前先确认：
@@ -14,7 +14,7 @@ python3 tools/detect_system.py --show-template rollout
 - checkpoint 路径不是默认草稿，而是本组真正要用的结果
 - 如果刚刚重插设备，已经重新运行过检测
 
-确认完以后，再执行报告里的“可直接执行命令”。下面保留的是教学版参考命令。
+确认完以后，再手动把这些当前端口和 checkpoint 路径填进下面这条部署命令。
 
 ## 2. 参考命令
 

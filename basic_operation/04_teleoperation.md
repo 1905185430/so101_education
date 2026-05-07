@@ -2,13 +2,7 @@
 
 本章的目标是根据主从臂和相机的当前端口完成遥操作，并在执行前看懂 `top/wrist` 视角和当前端口的对应关系。
 
-## 1. 先查看本章模板
-
-```bash
-python3 tools/detect_system.py --show-template teleoperate
-```
-
-在改命令之前，先重新运行一次：
+## 1. 先查看当前设备
 
 ```bash
 python3 tools/detect_system.py
@@ -21,7 +15,7 @@ python3 tools/detect_system.py
 - `top_camera` 当前 `dev`
 - `wrist_camera` 当前 `dev`
 
-同时打开 `tools/devices/images/` 下的截图，确认俯视画面对应 `top_camera`，手眼近景对应 `wrist_camera`。如果截图方向不对，先修正 `device_roles.json`，不要直接硬改命令。
+同时打开 `tools/devices/images/` 下的截图，确认俯视画面对应 `top_camera`，手眼近景对应 `wrist_camera`。
 
 执行前先确认：
 
@@ -29,7 +23,7 @@ python3 tools/detect_system.py
 - `wrist_camera` 真的是近手视角
 - 当前 `tty` / `dev` 是这次重新检测到的结果，不是上一次记住的值
 
-确认完以后，再执行报告里的“可直接执行命令”。下面保留教学版参考命令。
+确认完以后，再手动把这些当前端口填进下面这条命令。
 
 ## 2. 参考命令
 
@@ -60,7 +54,7 @@ lerobot-teleoperate \
 
 ## 5. 命令改写训练
 
-如果报告里显示：
+如果 `device_simple.json` 里显示：
 
 - `follower -> /dev/ttyACM0`
 - `leader -> /dev/ttyACM1`
@@ -69,7 +63,7 @@ lerobot-teleoperate \
 
 那么你应该把模板中的 4 个占位符全部替换，而不是只改机械臂端口。
 
-如果你发现截图中 `top_camera` 实际上是手腕视角，而 `wrist_camera` 实际上是俯视视角，说明角色填反了。这个时候应先回到 `device_roles.json` 调整绑定，再重新运行检测，而不是直接在命令里把两个名字硬记反。
+如果你发现截图中 `top_camera` 实际上是手腕视角，而 `wrist_camera` 实际上是俯视视角，说明你对相机角色的判断反了。这个时候应先重新确认截图，再改命令，而不是把两个名字硬记反。
 
 ## 6. 常见问题
 

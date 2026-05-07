@@ -2,10 +2,10 @@
 
 本章的目标是根据当前硬件映射完成校准，并在执行前确认主从臂角色和当前端口一致。
 
-## 1. 先查看本章命令
+## 1. 先查看当前设备
 
 ```bash
-python3 tools/detect_system.py --show-template calibrate
+python3 tools/detect_system.py
 ```
 
 执行前先确认：
@@ -14,7 +14,7 @@ python3 tools/detect_system.py --show-template calibrate
 - 当前 `tty` 是这次重新检测到的结果
 - 校准环境周围没有障碍物
 
-确认完以后，再执行报告里的“可直接执行命令”。下面保留的是教学版参考命令。
+确认完以后，再手动把当前 `tty` 填进下面这条校准命令。
 
 ## 2. 参考命令
 

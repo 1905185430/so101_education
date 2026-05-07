@@ -1,6 +1,6 @@
 # SO-101 LeRobot 三次课实验书
 
-这套仓库面向课堂教学，当前学生主入口已经重组为 3 次课、3 个实验。当前推荐路径是：先沿着 `detect_system` 给出的基线完成实验，但在每个关键节点都先完成角色和端口确认，再执行命令。
+这套仓库面向课堂教学，当前学生主入口已经重组为 3 次课、3 个实验。当前推荐路径是：先运行 `detect_system` 扫描当前硬件，再根据 `device_simple.json` 和相机截图手动填写 LeRobot 命令。
 
 现在仓库采用“两层结构”：
 
@@ -53,70 +53,44 @@
 
 ```bash
 python3 tools/detect_system.py
-python3 tools/detect_system.py --show-template calibrate
-python3 tools/detect_system.py --show-template teleoperate
-python3 tools/detect_system.py --show-template record
-python3 tools/detect_system.py --show-template replay
-python3 tools/detect_system.py --show-template rollout
+python3 tools/detect_system.py --skip-capture
+python3 tools/detect_system.py --format json
 ```
 
 检测工具会输出：
 
 - 当前识别到的设备
-- `leader`、`follower`、`top_camera`、`wrist_camera` 的当前端口
-- 每一路相机当前对应的固定身份标识 `by_path`
+- 机械臂当前 `tty` 与 `by-id`
+- 相机当前 `dev` 与 `by-path`
 - `tools/devices/images/` 下的相机截图
-- `tools/devices/report.md`
-- 可直接执行命令
-- 教学版参考命令模板
-- 学生本机应参考的候选替换值
-
-如果第一次使用本仓库，可以先生成角色配置模板：
-
-```bash
-python3 tools/detect_system.py --write-roles-template
-```
-
-然后由教师或助教根据真实设备填写 [device_roles.json](/home/xuan/so101_education/tools/devices/device_roles.json)。
+- [device_simple.json](/home/xuan/so101_education/tools/devices/device_simple.json)
 
 ## detect_system 结果怎么用
 
-如果你现在最大的困惑是“不知道怎么分清主臂、从臂、top 相机、wrist 相机，也不知道 `device_roles.json` 该怎么填”，请先看：
+如果你现在最大的困惑是“不知道怎么分清主臂、从臂、top 相机、wrist 相机”，请先看：
 
-- [02A. 如何填写 device_roles.json](basic_operation/02a_device_roles_filling_guide.md)
+- [02A. 如何根据截图和 device_simple 判断设备角色](basic_operation/02a_device_roles_filling_guide.md)
 
 建议学生每次都按同一顺序操作：
 
 1. 先运行 `python3 tools/detect_system.py`
-2. 先看角色是否已经恢复：`leader`、`follower`、`top_camera`、`wrist_camera`
-3. 再看固定身份：机械臂优先看 `by-id`，相机优先看 `by_path`
-4. 再看这一次真正要执行的当前 `tty` / `dev`
-5. 如果角色还是 `missing`，先填写 [device_roles.json](/home/xuan/so101_education/tools/devices/device_roles.json)
-6. 重新运行一次 `python3 tools/detect_system.py`，确认角色已经从 `missing` 变成 `connected`
-7. 确认截图、角色名和当前端口都对上之后，再执行报告里的“可直接执行命令”
-8. 执行完成后，再对照“教学版参考命令”理解参数来源
+2. 打开 [device_simple.json](/home/xuan/so101_education/tools/devices/device_simple.json)
+3. 先看机械臂的 `tty` 和 `by-id`
+4. 再看相机的 `dev`、`by-path` 和 `image`
+5. 打开 `tools/devices/images/` 下的截图，确认哪一路是 `top`，哪一路是 `wrist`
+6. 再把当前 `tty` / `dev` 手动填入 LeRobot 命令
 
 这里要特别区分两类字段：
 
-- 固定身份标识：用于填写 `device_roles.json`，帮助你在断电重连后恢复角色
+- `by-id` / `by-path`：帮助你识别这是哪一个物理设备
 - 当前 `tty` / `dev`：用于本次实际执行的 LeRobot 命令
 
 ## 这门课里你必须真正看懂的 4 件事
 
 - `leader` 和 `follower` 怎么区分
 - `top_camera` 和 `wrist_camera` 怎么区分
-- 为什么 `by-id` / `by-path` 用来保存固定身份
-- 为什么 LeRobot 命令里填的是当前 `tty` / `dev`，而不是固定身份
-
-## 命令输出模式
-
-现在 `detect_system` 采用“双模式并存”：
-
-- `可直接执行命令`：检测工具已经把当前硬件端口填好，完成关键确认项后可以直接复制
-- `教学版参考命令`：保留占位符，用于执行后回看“这些参数为什么这样写”
-
-对于 `record`、`replay`、`rollout` 这类还需要数据集名或 checkpoint 的命令，工具会自动填一组保底默认值。  
-报告里会明确标注这些值是“自动默认值，执行前请确认”。
+- 为什么 `by-id` / `by-path` 更适合识别物理设备
+- 为什么 LeRobot 命令里真正要填的是当前 `tty` / `dev`
 
 ## 导学资料来源说明
 
@@ -133,22 +107,11 @@ python3 tools/detect_system.py --write-roles-template
 - `wrist_camera`
 - `side_camera`（可选扩展）
 
-## 统一占位符
-
-- `<LEADER_PORT>`
-- `<FOLLOWER_PORT>`
-- `<TOP_CAMERA_DEV>`
-- `<WRIST_CAMERA_DEV>`
-- `<SIDE_CAMERA_DEV>`（仅扩展说明使用）
-- `<DATASET_REPO_ID>`
-- `<OUTPUT_DIR>`
-- `<CHECKPOINT_PATH>`
-
 ## 学生提交要求
 
-- 学生提交自己修改后的命令，而不是原始模板
-- 学生说明自己改了哪些参数、这些值来自哪条检测结果
-- 每次课至少保留一次终端截图或 `report.md`
+- 学生提交自己修改后的命令
+- 学生说明自己改了哪些参数、这些值来自 `device_simple.json` 的哪一项
+- 每次课至少保留一次终端截图或 `device_simple.json`
 
 ## 附录与细化参考
 
@@ -157,7 +120,7 @@ python3 tools/detect_system.py --write-roles-template
 1. [00. 如何从检测结果改写命令](basic_operation/00_command_template_guide.md)
 2. [01. 环境搭建与 CLI 验证](basic_operation/01_environment_setup.md)
 3. [02. 设备映射与角色绑定](basic_operation/02_arm_detection.md)
-4. [02A. 如何填写 device_roles.json](basic_operation/02a_device_roles_filling_guide.md)
+4. [02A. 如何根据截图和 device_simple 判断设备角色](basic_operation/02a_device_roles_filling_guide.md)
 5. [03. 主从臂校准](basic_operation/03_calibration.md)
 6. [04. 带相机的遥操作](basic_operation/04_teleoperation.md)
 7. [05. 数据采集与回放](basic_operation/05_dataset_recording.md)
