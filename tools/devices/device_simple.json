@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-05-07T18:55:24.843352",
+  "timestamp": "2026-05-07T19:06:20.504547",
   "device_simple_path": "/home/xuan/so101_education/tools/devices/device_simple.json",
   "images_dir": "/home/xuan/so101_education/tools/devices/images",
   "arms": {
@@ -23,11 +23,17 @@
       "by_path": "/dev/v4l/by-path/pci-0000:00:14.0-usb-0:7:1.0-video-index0",
       "serial": "Sonix_Technology_Co.__Ltd._USB2.0_HD_UVC_WebCam",
       "product": "Sonix Technology Co.  Ltd. USB2.0 HD UVC WebCam",
-      "color_stream": null,
+      "color_stream": true,
+      "stream_info": {
+        "codec_name": "rawvideo",
+        "pix_fmt": "yuyv422",
+        "width": 640,
+        "height": 480
+      },
       "status": "connected",
-      "image": "",
-      "capture_status": "failed",
-      "capture_detail": "OpenCV 未安装，无法保存截图。"
+      "image": "images/Sonix_Technology_Co___Ltd__USB2_0_HD_UVC_WebCam__video0.jpg",
+      "capture_status": "saved",
+      "capture_detail": "ffmpeg 已保存截图。"
     },
     "pci-0000:00:14.0-usbv2-0:1.4:1.4": {
       "dev": "/dev/video10",
@@ -35,11 +41,17 @@
       "by_path": "/dev/v4l/by-path/pci-0000:00:14.0-usbv2-0:1.4:1.4-video-index0",
       "serial": "pci-0000:00:14.0-usbv2-0:1.4:1.4",
       "product": "pci-0000:00:14.0-usbv2-0:1.4:1.4 ",
-      "color_stream": null,
+      "color_stream": true,
+      "stream_info": {
+        "codec_name": "rawvideo",
+        "pix_fmt": "yuyv422",
+        "width": 640,
+        "height": 480
+      },
       "status": "connected",
       "image": "",
       "capture_status": "failed",
-      "capture_detail": "OpenCV 未安装，无法保存截图。"
+      "capture_detail": "ffmpeg 无法从该相机节点抓取有效彩色画面。"
     },
     "icSpring_icspring_camera_20240307110322": {
       "dev": "/dev/video2",
@@ -47,11 +59,17 @@
       "by_path": "/dev/v4l/by-path/pci-0000:00:14.0-usb-0:1.1:1.0-video-index0",
       "serial": "icSpring_icspring_camera_20240307110322",
       "product": "icSpring icspring camera 20240307110322",
-      "color_stream": null,
+      "color_stream": true,
+      "stream_info": {
+        "codec_name": "mjpeg",
+        "pix_fmt": "yuvj422p",
+        "width": 640,
+        "height": 480
+      },
       "status": "connected",
-      "image": "",
-      "capture_status": "failed",
-      "capture_detail": "OpenCV 未安装，无法保存截图。"
+      "image": "images/icSpring_icspring_camera_20240307110322__video2.jpg",
+      "capture_status": "saved",
+      "capture_detail": "ffmpeg 已保存截图。"
     },
     "Orbbec_R__Orbbec_Gemini_335_CP15641000AW": {
       "dev": "/dev/video4",
@@ -59,16 +77,22 @@
       "by_path": "/dev/v4l/by-path/pci-0000:00:14.0-usb-0:1.4:1.0-video-index0",
       "serial": "Orbbec_R__Orbbec_Gemini_335_CP15641000AW",
       "product": "Orbbec R  Orbbec Gemini 335 CP15641000AW",
-      "color_stream": null,
+      "color_stream": false,
+      "stream_info": {
+        "codec_name": "rawvideo",
+        "pix_fmt": "gray16le",
+        "width": 640,
+        "height": 480
+      },
       "status": "connected",
       "image": "",
       "capture_status": "failed",
-      "capture_detail": "OpenCV 未安装，无法保存截图。"
+      "capture_detail": "当前节点像素格式为 gray16le，更像深度/灰度/原始流，已跳过截图。"
     }
   },
   "summary": {
     "arms": 2,
     "cameras": 4,
-    "captured_images": 0
+    "captured_images": 2
   }
 }

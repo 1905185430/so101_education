@@ -18,7 +18,6 @@ import argparse
 import json
 import shutil
 import subprocess
-import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
@@ -29,6 +28,25 @@ IMAGES_DIR = BASE_DIR / "images"
 DEVICE_SIMPLE_PATH = BASE_DIR / "device_simple.json"
 SUPPORTED_FORMATS = ["text", "json"]
 COLOR_FORMATS = {"YUYV", "MJPG", "NV12", "RGB3", "BGR3"}
+LIKELY_COLOR_PIXEL_FORMATS = {
+    "yuyv422",
+    "uyvy422",
+    "nv12",
+    "rgb24",
+    "bgr24",
+    "mjpeg",
+    "yuvj422p",
+    "yuvj420p",
+    "yuv420p",
+}
+NON_COLOR_PIXEL_FORMATS = {
+    "gray16le",
+    "gray",
+    "bayer_bggr8",
+    "bayer_rggb8",
+    "bayer_gbrg8",
+    "bayer_grbg8",
+}
 
 
 def run_cmd(cmd: List[str], timeout: int = 3) -> subprocess.CompletedProcess:
@@ -135,6 +153,54 @@ def has_color_stream(formats: List[Dict[str, Any]]) -> bool:
     return any(fmt.get("fourcc") in COLOR_FORMATS for fmt in formats)
 
 
+def probe_stream_info(dev_path: str) -> Dict[str, Any]:
+    if not shutil.which("ffprobe"):
+        return {}
+    result = run_cmd(
+        [
+            "ffprobe",
+            "-v",
+            "error",
+            "-f",
+            "video4linux2",
+            "-show_streams",
+            "-of",
+            "json",
+            dev_path,
+        ],
+        timeout=5,
+    )
+    if result.returncode != 0 or not result.stdout.strip():
+        return {}
+    try:
+        data = json.loads(result.stdout)
+    except Exception:
+        return {}
+    streams = data.get("streams") or []
+    if not streams:
+        return {}
+    stream = streams[0]
+    return {
+        "codec_name": stream.get("codec_name"),
+        "pix_fmt": stream.get("pix_fmt"),
+        "width": stream.get("width"),
+        "height": stream.get("height"),
+    }
+
+
+def is_likely_color_camera(formats: List[Dict[str, Any]], stream_info: Dict[str, Any]) -> bool | None:
+    if formats:
+        return has_color_stream(formats)
+    pix_fmt = (stream_info.get("pix_fmt") or "").lower()
+    if not pix_fmt:
+        return None
+    if pix_fmt in NON_COLOR_PIXEL_FORMATS:
+        return False
+    if pix_fmt in LIKELY_COLOR_PIXEL_FORMATS:
+        return True
+    return None
+
+
 def get_camera_info(dev_path: str) -> Dict[str, Any]:
     dev_name = Path(dev_path).name
     by_id, by_path = find_video_links(dev_name)
@@ -152,6 +218,7 @@ def get_camera_info(dev_path: str) -> Dict[str, Any]:
         "product": infer_camera_product(dev_name, by_id, by_path),
         "formats": [],
         "color_stream": None,
+        "stream_info": {},
         "status": "connected",
     }
 
@@ -163,6 +230,11 @@ def get_camera_info(dev_path: str) -> Dict[str, Any]:
                 break
         info["formats"] = get_formats(dev_path)
         info["color_stream"] = has_color_stream(info["formats"]) if info["formats"] else None
+
+    info["stream_info"] = probe_stream_info(dev_path)
+    likely_color = is_likely_color_camera(info["formats"], info["stream_info"])
+    if likely_color is not None:
+        info["color_stream"] = likely_color
 
     return info
 
@@ -190,16 +262,84 @@ def get_arm_info(dev_path: str) -> Dict[str, Any]:
     return info
 
 
-def capture_image(dev_path: str, output_path: str, formats: List[Dict[str, Any]]) -> Tuple[bool, str]:
+def capture_image_ffmpeg(dev_path: str, output_path: str) -> Tuple[bool, str]:
+    if not shutil.which("ffmpeg"):
+        return False, "ffmpeg 未安装，无法保存截图。"
+    result = run_cmd(
+        [
+            "ffmpeg",
+            "-hide_banner",
+            "-loglevel",
+            "error",
+            "-y",
+            "-f",
+            "video4linux2",
+            "-i",
+            dev_path,
+            "-frames:v",
+            "1",
+            output_path,
+        ],
+        timeout=10,
+    )
+    if result.returncode == 0 and Path(output_path).exists():
+        return True, "ffmpeg 已保存截图。"
+    return False, "ffmpeg 无法从该相机节点抓取有效彩色画面。"
+
+
+def frame_looks_suspicious(frame: Any) -> bool:
+    try:
+        import numpy as np  # type: ignore
+    except Exception:
+        np = None  # type: ignore
+    if frame is None or np is None:
+        return False
+    if len(frame.shape) != 3 or frame.shape[2] != 3:
+        return True
+    b = frame[:, :, 0].astype("float32")
+    g = frame[:, :, 1].astype("float32")
+    r = frame[:, :, 2].astype("float32")
+    green_mask = (g > 180) & (r < 60) & (b < 60)
+    green_ratio = float(green_mask.mean())
+    return green_ratio > 0.45
+
+
+def validate_saved_image(image_path: str) -> Tuple[bool, str]:
     try:
         import cv2  # type: ignore
     except Exception:
-        return False, "OpenCV 未安装，无法保存截图。"
+        return True, ""
+    frame = cv2.imread(image_path)
+    if frame is None:
+        return False, "截图文件已生成，但无法重新读取。"
+    if frame_looks_suspicious(frame):
+        try:
+            Path(image_path).unlink(missing_ok=True)
+        except Exception:
+            pass
+        return False, "截图画面疑似异常偏绿，通常表示该节点不是正常教学彩色流。"
+    return True, ""
+
+
+def capture_image(dev_path: str, output_path: str, formats: List[Dict[str, Any]], stream_info: Dict[str, Any]) -> Tuple[bool, str]:
+    likely_color = is_likely_color_camera(formats, stream_info)
+    if likely_color is False:
+        pix_fmt = stream_info.get("pix_fmt") or "未知"
+        return False, f"当前节点像素格式为 {pix_fmt}，更像深度/灰度/原始流，已跳过截图。"
+
+    ffmpeg_ok, ffmpeg_detail = capture_image_ffmpeg(dev_path, output_path)
+    if ffmpeg_ok:
+        image_ok, image_detail = validate_saved_image(output_path)
+        if image_ok:
+            return True, ffmpeg_detail
+        return False, image_detail
 
     try:
-        if formats and not has_color_stream(formats):
-            return False, "当前相机未检测到彩色流，已跳过截图。"
+        import cv2  # type: ignore
+    except Exception:
+        return False, ffmpeg_detail if ffmpeg_detail else "OpenCV 未安装，无法保存截图。"
 
+    try:
         cap = cv2.VideoCapture(dev_path, cv2.CAP_V4L2)
         if not cap.isOpened():
             cap = cv2.VideoCapture(dev_path)
@@ -214,8 +354,13 @@ def capture_image(dev_path: str, output_path: str, formats: List[Dict[str, Any]]
         cap.release()
 
         if ret and frame is not None:
+            if frame_looks_suspicious(frame):
+                return False, "OpenCV 读取到的画面疑似异常偏绿，通常表示该节点不是正常教学彩色流。"
             if cv2.imwrite(output_path, frame):
-                return True, "截图已保存。"
+                image_ok, image_detail = validate_saved_image(output_path)
+                if image_ok:
+                    return True, "OpenCV 已保存截图。"
+                return False, image_detail
             return False, "已读取到图像，但写入图片文件失败。"
         return False, "已打开相机，但未读取到有效图像帧。"
     except Exception as exc:
@@ -250,7 +395,12 @@ def detect_hardware(skip_capture: bool) -> Tuple[Dict[str, Any], Dict[str, Any]]
 
         img_name = f"{safe_name(serial)}__{Path(cam['dev']).name}.jpg"
         img_path = IMAGES_DIR / img_name
-        capture_ok, capture_detail = capture_image(cam["dev"], str(img_path), cam.get("formats", []))
+        capture_ok, capture_detail = capture_image(
+            cam["dev"],
+            str(img_path),
+            cam.get("formats", []),
+            cam.get("stream_info", {}),
+        )
         if capture_ok:
             cam["image"] = f"images/{img_name}"
             cam["capture_status"] = "saved"
