@@ -904,6 +904,7 @@ def build_report(
     next_steps = [
         "先打开 tools/devices/report.md，核对 leader、follower、top_camera、wrist_camera 的当前端口与固定身份标识。",
         "再打开 tools/devices/images/ 下的截图，确认哪一路画面是 top、哪一路画面是 wrist。",
+        "如果你还分不清哪只是 leader、哪路是 top_camera，请先阅读 basic_operation/02a_device_roles_filling_guide.md。",
         "如果角色未绑定，请先把机械臂的 by-id / serial、相机的 by_path / serial 填入 tools/devices/device_roles.json。",
         "角色确认无误后，再把参考命令中的当前 tty / video 占位符手动替换掉。",
     ]
@@ -995,6 +996,7 @@ def render_markdown(report: Dict[str, Any]) -> str:
     lines.append("- `leader`、`follower`：优先抄 `by-id` 到 `port`，再补 `serial`。")
     lines.append("- `top_camera`、`wrist_camera`、`side_camera`：优先抄 `by_path`，再补 `serial`。")
     lines.append("- 完成填写后，必须重新运行一次 `python3 tools/detect_system.py`，确认角色从 `missing` 变成 `connected`。")
+    lines.append("- 如果你还分不清哪只是 `leader`、哪路相机是 `top_camera`，请先阅读 [02A. 如何填写 device_roles.json](/home/xuan/so101_education/basic_operation/02a_device_roles_filling_guide.md)。")
     lines.append("")
     lines.append("## 当前识别到的设备")
     lines.append("")
@@ -1091,6 +1093,7 @@ def render_text(report: Dict[str, Any]) -> str:
     lines.append("  - 机械臂优先抄 by-id / serial")
     lines.append("  - 相机优先抄 by-path / serial")
     lines.append("  - 角色文件改完后必须重新运行一次检测")
+    lines.append("  - 如果你还分不清主臂、从臂和相机角色，请先看 basic_operation/02a_device_roles_filling_guide.md")
     lines.append("")
     lines.append("当前识别到的设备:")
     for serial, arm in report["devices"]["arms"].items():

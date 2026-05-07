@@ -48,6 +48,15 @@ python3 tools/detect_system.py --show-template replay
 4. 如果截图方向和角色名对不上，先改 [device_roles.json](/home/xuan/so101_education/tools/devices/device_roles.json)，再重新运行检测
 5. 只有当 `report.md` 里的角色、截图和当前 `dev` 都对上之后，再去改命令
 
+如果这一步里你看到：
+
+- `top_camera: missing`
+- `wrist_camera: missing`
+
+先不要直接改相机命令。说明设备还没绑定到角色，请先看：
+
+- [02A. 如何填写 device_roles.json](/home/xuan/so101_education/basic_operation/02a_device_roles_filling_guide.md)
+
 ### 2. 先完成遥操作
 
 ```bash
@@ -131,5 +140,6 @@ lerobot-replay \
 
 ## 细化参考
 
+- [02A. 如何填写 device_roles.json](/home/xuan/so101_education/basic_operation/02a_device_roles_filling_guide.md)
 - [04. 带相机的遥操作](/home/xuan/so101_education/basic_operation/04_teleoperation.md)
 - [05. 数据采集与回放](/home/xuan/so101_education/basic_operation/05_dataset_recording.md)

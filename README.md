@@ -80,6 +80,10 @@ python3 tools/detect_system.py --write-roles-template
 
 ## detect_system 结果怎么用
 
+如果你现在最大的困惑是“不知道怎么分清主臂、从臂、top 相机、wrist 相机，也不知道 `device_roles.json` 该怎么填”，请先看：
+
+- [02A. 如何填写 device_roles.json](basic_operation/02a_device_roles_filling_guide.md)
+
 建议学生每次都按同一顺序操作：
 
 1. 先运行 `python3 tools/detect_system.py`
@@ -134,11 +138,12 @@ python3 tools/detect_system.py --write-roles-template
 1. [00. 如何从检测结果改写命令](basic_operation/00_command_template_guide.md)
 2. [01. 环境搭建与 CLI 验证](basic_operation/01_environment_setup.md)
 3. [02. 设备映射与角色绑定](basic_operation/02_arm_detection.md)
-4. [03. 主从臂校准](basic_operation/03_calibration.md)
-5. [04. 带相机的遥操作](basic_operation/04_teleoperation.md)
-6. [05. 数据采集与回放](basic_operation/05_dataset_recording.md)
-7. [06. ACT 训练](basic_operation/06_act_training.md)
-8. [07. 策略部署](basic_operation/07_policy_deployment.md)
+4. [02A. 如何填写 device_roles.json](basic_operation/02a_device_roles_filling_guide.md)
+5. [03. 主从臂校准](basic_operation/03_calibration.md)
+6. [04. 带相机的遥操作](basic_operation/04_teleoperation.md)
+7. [05. 数据采集与回放](basic_operation/05_dataset_recording.md)
+8. [06. ACT 训练](basic_operation/06_act_training.md)
+9. [07. 策略部署](basic_operation/07_policy_deployment.md)
 
 ## 推荐参考
 

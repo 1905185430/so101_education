@@ -1,6 +1,6 @@
 # SO-101 实验设备检测报告
 
-- 生成时间: `2026-05-07T17:45:26.891946`
+- 生成时间: `2026-05-07T17:53:50.461132`
 - 检测阶段: `all`
 
 ## 当前角色身份与端口
@@ -47,6 +47,7 @@
 - `leader`、`follower`：优先抄 `by-id` 到 `port`，再补 `serial`。
 - `top_camera`、`wrist_camera`、`side_camera`：优先抄 `by_path`，再补 `serial`。
 - 完成填写后，必须重新运行一次 `python3 tools/detect_system.py`，确认角色从 `missing` 变成 `connected`。
+- 如果你还分不清哪只是 `leader`、哪路相机是 `top_camera`，请先阅读 [02A. 如何填写 device_roles.json](/home/xuan/so101_education/basic_operation/02a_device_roles_filling_guide.md)。
 
 ## 当前识别到的设备
 

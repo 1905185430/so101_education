@@ -51,6 +51,15 @@ lerobot-find-port
 5. 打开 [device_roles.json](/home/xuan/so101_education/tools/devices/device_roles.json)，把 `leader` 和 `follower` 的 `port`、`serial` 填进去
 6. 填完以后再运行一次 `python3 tools/detect_system.py`，确认报告中的角色不再是 `missing`
 
+如果你第一次看到：
+
+- `leader: missing`
+- `follower: missing`
+
+这是正常的，说明设备已经识别到了，但角色还没有绑定。这个时候先不要急着校准，先去看：
+
+- [02A. 如何填写 device_roles.json](/home/xuan/so101_education/basic_operation/02a_device_roles_filling_guide.md)
+
 如果你重新插拔了主从臂，`/dev/ttyACM*` 可能会变，但只要 `device_roles.json` 里写的是正确的 `by-id`，角色就应该还能恢复成原来的 `leader` / `follower`。
 
 ### 3. 参考命令
@@ -102,4 +111,5 @@ lerobot-calibrate \
 - [00. 如何从检测结果改写命令](/home/xuan/so101_education/basic_operation/00_command_template_guide.md)
 - [01. 环境搭建与 CLI 验证](/home/xuan/so101_education/basic_operation/01_environment_setup.md)
 - [02. 设备映射与角色绑定](/home/xuan/so101_education/basic_operation/02_arm_detection.md)
+- [02A. 如何填写 device_roles.json](/home/xuan/so101_education/basic_operation/02a_device_roles_filling_guide.md)
 - [03. 主从臂校准](/home/xuan/so101_education/basic_operation/03_calibration.md)

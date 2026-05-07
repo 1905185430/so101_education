@@ -2,6 +2,10 @@
 
 本章的目标是区分“设备身份”和“当前端口号”，并把你的设备绑定到统一的教学角色名上。
 
+如果你现在最关心的是“怎么分清哪只是主臂、哪只是从臂、哪一路是 top/wrist 相机”，请优先阅读：
+
+- [02A. 如何填写 device_roles.json](/home/xuan/so101_education/basic_operation/02a_device_roles_filling_guide.md)
+
 ## 1. 为什么要做角色绑定
 
 断电重连之后，系统里的 `/dev/ttyACM0`、`/dev/video0` 可能会变化。  
@@ -49,6 +53,9 @@ lerobot-find-port
 5. 再运行一次 `python3 tools/detect_system.py`
 6. 确认 `leader`、`follower`、`top_camera`、`wrist_camera` 已从 `missing` 变成 `connected`
 7. 最后才去改 LeRobot 参考命令里的当前 `tty` / `dev`
+
+如果你还不能明确判断主从臂和相机角色，不要在这一章里硬猜。  
+先去按 [02A. 如何填写 device_roles.json](/home/xuan/so101_education/basic_operation/02a_device_roles_filling_guide.md) 里的动作法和截图法做判断，再回来填写。
 
 ## 4. 你需要修改的参数
 
@@ -122,4 +129,5 @@ lerobot-find-port
 
 ---
 **上一节：** [01. 环境搭建与 CLI 验证](01_environment_setup.md)
+**辅助教程：** [02A. 如何填写 device_roles.json](02a_device_roles_filling_guide.md)
 **下一节：** [03. 主从臂校准](03_calibration.md)

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-05-07T17:45:26.891946",
+  "timestamp": "2026-05-07T17:53:50.461132",
   "stage": "all",
   "system": {
     "cwd": "/home/xuan/so101_education",
@@ -279,7 +279,7 @@
         "serial": "5B41532613",
         "status": "connected",
         "first_seen": "2026-04-24T21:55:24.807057",
-        "last_seen": "2026-05-07T17:45:26.890279"
+        "last_seen": "2026-05-07T17:53:50.432796"
       },
       "5B42137834": {
         "tty": "/dev/ttyACM1",
@@ -287,7 +287,7 @@
         "serial": "5B42137834",
         "status": "connected",
         "first_seen": "2026-04-24T21:55:24.807057",
-        "last_seen": "2026-05-07T17:45:26.890279"
+        "last_seen": "2026-05-07T17:53:50.432796"
       }
     },
     "cameras": {
@@ -300,7 +300,7 @@
         "formats": [],
         "status": "connected",
         "first_seen": "2026-04-24T21:55:24.807043",
-        "last_seen": "2026-05-07T17:45:26.890244",
+        "last_seen": "2026-05-07T17:53:50.432783",
         "color_stream": null,
         "image": "",
         "capture_status": "failed",
@@ -315,7 +315,7 @@
         "formats": [],
         "status": "connected",
         "first_seen": "2026-04-24T21:55:24.807043",
-        "last_seen": "2026-05-07T17:45:26.890244",
+        "last_seen": "2026-05-07T17:53:50.432783",
         "color_stream": null,
         "image": "",
         "capture_status": "failed",
@@ -409,7 +409,7 @@
         "formats": [],
         "status": "connected",
         "first_seen": "2026-04-24T21:55:24.807043",
-        "last_seen": "2026-05-07T17:45:26.890244",
+        "last_seen": "2026-05-07T17:53:50.432783",
         "color_stream": null,
         "image": "",
         "capture_status": "failed",
@@ -425,7 +425,7 @@
         "color_stream": null,
         "status": "connected",
         "first_seen": "2026-05-07T17:43:57.693944",
-        "last_seen": "2026-05-07T17:45:26.890244",
+        "last_seen": "2026-05-07T17:53:50.432783",
         "image": "",
         "capture_status": "failed",
         "capture_detail": "OpenCV 未安装，无法保存截图。"
@@ -579,6 +579,7 @@
   "next_steps": [
     "先打开 tools/devices/report.md，核对 leader、follower、top_camera、wrist_camera 的当前端口与固定身份标识。",
     "再打开 tools/devices/images/ 下的截图，确认哪一路画面是 top、哪一路画面是 wrist。",
+    "如果你还分不清哪只是 leader、哪路是 top_camera，请先阅读 basic_operation/02a_device_roles_filling_guide.md。",
     "如果角色未绑定，请先把机械臂的 by-id / serial、相机的 by_path / serial 填入 tools/devices/device_roles.json。",
     "角色确认无误后，再把参考命令中的当前 tty / video 占位符手动替换掉。"
   ]
