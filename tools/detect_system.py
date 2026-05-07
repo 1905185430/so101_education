@@ -1015,11 +1015,12 @@ def build_report(
     role_identity_reference = build_role_identity_reference(role_summary)
 
     next_steps = [
-        "先打开 tools/devices/report.md，核对 leader、follower、top_camera、wrist_camera 的当前端口与固定身份标识。",
+        "先打开 tools/devices/report.md，确认 leader、follower、top_camera、wrist_camera 是否已经恢复到正确角色。",
+        "再核对固定身份标识与当前端口：机械臂重点看 by-id，相机重点看 by_path，本次执行命令再看当前 tty / dev。",
         "再打开 tools/devices/images/ 下的截图，确认哪一路画面是 top、哪一路画面是 wrist。",
         "如果你还分不清哪只是 leader、哪路是 top_camera，请先阅读 basic_operation/02a_device_roles_filling_guide.md。",
         "如果角色未绑定，请先把机械臂的 by-id / serial、相机的 by_path / serial 填入 tools/devices/device_roles.json。",
-        "角色确认无误后，优先直接复制报告里的可执行命令；如果你要理解参数来源，再对照教学版参考命令。",
+        "角色、截图和当前端口都确认无误后，再执行报告里的可直接执行命令；执行后可对照教学版参考命令理解参数来源。",
     ]
 
     return {
@@ -1172,6 +1173,14 @@ def render_markdown(report: Dict[str, Any]) -> str:
             lines.append("- 自动默认值，执行前请确认：")
             for placeholder, value in template["autofilled_defaults"].items():
                 lines.append(f"  - `{placeholder}` -> `{value}`")
+        execution_tips = {
+            "calibrate": "执行前提示: 确认主从臂没有填反，且当前 `tty` 与这次连接一致。",
+            "teleoperate": "执行前提示: 确认 `top_camera` 是俯视全局画面，`wrist_camera` 是近手视角。",
+            "record": "执行前提示: 确认数据集名、任务描述和 `top/wrist` 角色都符合本组实际。",
+            "replay": "执行前提示: 确认这次回放要验证的是数据可复现，且数据集名与 episode 编号正确。",
+            "rollout": "执行前提示: 确认 checkpoint 路径不是默认草稿，且 `follower + top + wrist` 仍然对应这次连接。",
+        }
+        lines.append(f"- {execution_tips.get(name, '执行前提示: 先确认角色和当前端口，再执行命令。')}")
         lines.append("")
         lines.append("可直接执行命令：")
         lines.append("")
@@ -1261,9 +1270,17 @@ def render_text(report: Dict[str, Any]) -> str:
             lines.append(f"  - {item['status'].upper()} {item['name']}: {item['detail']}{hint}")
         lines.append("")
     lines.append("命令输出:")
+    execution_tips = {
+        "calibrate": "确认主从臂没有填反，且当前 tty 与这次连接一致。",
+        "teleoperate": "确认 top 是俯视全局画面，wrist 是近手视角。",
+        "record": "确认数据集名、任务描述和 top/wrist 角色都符合本组实际。",
+        "replay": "确认回放验证的是数据可复现，且数据集名与 episode 编号正确。",
+        "rollout": "确认 checkpoint 路径不是默认草稿，且 follower + top + wrist 仍然对应这次连接。",
+    }
     for name, template in report["reference_templates"].items():
         lines.append(f"  [{name}] {template['title']}")
         lines.append(f"    可直接执行: {template['direct_command_ready']}")
+        lines.append(f"    执行前提示: {execution_tips.get(name, '先确认角色和当前端口，再执行命令。')}")
         if template["direct_command_ready"] and template["direct_command"]:
             lines.append("    [可直接执行命令]")
             for cmd_line in template["direct_command"].splitlines():

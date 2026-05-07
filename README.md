@@ -1,6 +1,6 @@
 # SO-101 LeRobot 三次课实验书
 
-这套仓库面向课堂教学，当前学生主入口已经重组为 3 次课、3 个实验。当前默认路径已经调整为：先使用 `detect_system` 生成的可直接执行命令快速跑通；如果还想理解参数来源，再回头对照教学版参考命令学习。
+这套仓库面向课堂教学，当前学生主入口已经重组为 3 次课、3 个实验。当前推荐路径是：先沿着 `detect_system` 给出的基线完成实验，但在每个关键节点都先完成角色和端口确认，再执行命令。
 
 现在仓库采用“两层结构”：
 
@@ -88,25 +88,32 @@ python3 tools/detect_system.py --write-roles-template
 建议学生每次都按同一顺序操作：
 
 1. 先运行 `python3 tools/detect_system.py`
-2. 打开 [report.md](/home/xuan/so101_education/tools/devices/report.md)，先看 `leader`、`follower`、`top_camera`、`wrist_camera` 的当前端口
-3. 再看报告中的 `固定身份(by-id / by-path)`，其中机械臂优先抄 `by-id`，相机优先抄 `by_path`
-4. 打开 `tools/devices/images/` 下的截图，确认哪一路是 `top`，哪一路是 `wrist`
-5. 填写 [device_roles.json](/home/xuan/so101_education/tools/devices/device_roles.json)
+2. 先看角色是否已经恢复：`leader`、`follower`、`top_camera`、`wrist_camera`
+3. 再看固定身份：机械臂优先看 `by-id`，相机优先看 `by_path`
+4. 再看这一次真正要执行的当前 `tty` / `dev`
+5. 如果角色还是 `missing`，先填写 [device_roles.json](/home/xuan/so101_education/tools/devices/device_roles.json)
 6. 重新运行一次 `python3 tools/detect_system.py`，确认角色已经从 `missing` 变成 `connected`
-7. 优先复制报告里的“可直接执行命令”运行
-8. 如果你还想理解参数来源，再去看“教学版参考命令”
+7. 确认截图、角色名和当前端口都对上之后，再执行报告里的“可直接执行命令”
+8. 执行完成后，再对照“教学版参考命令”理解参数来源
 
 这里要特别区分两类字段：
 
 - 固定身份标识：用于填写 `device_roles.json`，帮助你在断电重连后恢复角色
 - 当前 `tty` / `dev`：用于本次实际执行的 LeRobot 命令
 
+## 这门课里你必须真正看懂的 4 件事
+
+- `leader` 和 `follower` 怎么区分
+- `top_camera` 和 `wrist_camera` 怎么区分
+- 为什么 `by-id` / `by-path` 用来保存固定身份
+- 为什么 LeRobot 命令里填的是当前 `tty` / `dev`，而不是固定身份
+
 ## 命令输出模式
 
 现在 `detect_system` 采用“双模式并存”：
 
-- `可直接执行命令`：检测工具已经把当前硬件端口填好，角色完整时可以直接复制
-- `教学版参考命令`：保留占位符，用于课堂解释“这些参数为什么这样写”
+- `可直接执行命令`：检测工具已经把当前硬件端口填好，完成关键确认项后可以直接复制
+- `教学版参考命令`：保留占位符，用于执行后回看“这些参数为什么这样写”
 
 对于 `record`、`replay`、`rollout` 这类还需要数据集名或 checkpoint 的命令，工具会自动填一组保底默认值。  
 报告里会明确标注这些值是“自动默认值，执行前请确认”。

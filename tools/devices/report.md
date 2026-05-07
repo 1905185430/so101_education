@@ -1,6 +1,6 @@
 # SO-101 实验设备检测报告
 
-- 生成时间: `2026-05-07T18:07:15.026412`
+- 生成时间: `2026-05-07T18:15:54.584787`
 - 检测阶段: `all`
 
 ## 当前角色身份与端口
@@ -128,12 +128,51 @@
 
 ## 命令输出
 
+### calibrate - 校准命令
+
+当前命令生成状态：
+- `direct_command_ready`: `False`
+- 状态说明: 当前缺少角色 `leader`, `follower`，因此无法直接生成命令。
+- 处理建议: 先阅读 [02A. 如何填写 device_roles.json](/home/xuan/so101_education/basic_operation/02a_device_roles_filling_guide.md)，完成角色绑定后再重新运行检测。
+- 执行前提示: 确认主从臂没有填反，且当前 `tty` 与这次连接一致。
+
+可直接执行命令：
+
+- 当前无法生成可直接执行命令。
+
+教学版参考命令：
+
+```bash
+lerobot-calibrate \
+  --teleop.type=so101_leader \
+  --teleop.port=<LEADER_PORT>
+
+lerobot-calibrate \
+  --robot.type=so101_follower \
+  --robot.port=<FOLLOWER_PORT>
+```
+
+本机应参考的占位符取值：
+- `<LEADER_PORT>` -> `<请根据检测结果填写>`
+- `<FOLLOWER_PORT>` -> `<请根据检测结果填写>`
+
+如果你要手动改写，请修改这些参数：
+- `<LEADER_PORT>`
+- `<FOLLOWER_PORT>`
+
+修改后应达到的效果：主臂和从臂分别完成零位校准，终端出现校准完成或保存结果提示。
+
+自检问题：
+- 如果 leader 当前对应 /dev/ttyACM1，你应该改哪一段？
+- 为什么 leader 和 follower 不能共用同一个端口？
+
 ### teleoperate - 遥操作命令
 
 当前命令生成状态：
 - `direct_command_ready`: `False`
 - 状态说明: 当前缺少角色 `leader`, `follower`, `top_camera`, `wrist_camera`，因此无法直接生成命令。
 - 处理建议: 先阅读 [02A. 如何填写 device_roles.json](/home/xuan/so101_education/basic_operation/02a_device_roles_filling_guide.md)，完成角色绑定后再重新运行检测。
+- 执行前提示: 确认 `top_camera` 是俯视全局画面，`wrist_camera` 是近手视角。
 
 可直接执行命令：
 
@@ -168,3 +207,140 @@ lerobot-teleoperate \
 自检问题：
 - 如果 wrist camera 实际是 /dev/video4，你应该改 JSON 里的哪一项？
 - 为什么本章要同时填写 leader、follower 和 camera 参数？
+
+### record - 数据采集命令
+
+当前命令生成状态：
+- `direct_command_ready`: `False`
+- 状态说明: 当前缺少角色 `leader`, `follower`, `top_camera`, `wrist_camera`，因此无法直接生成命令。
+- 处理建议: 先阅读 [02A. 如何填写 device_roles.json](/home/xuan/so101_education/basic_operation/02a_device_roles_filling_guide.md)，完成角色绑定后再重新运行检测。
+- 自动默认值，执行前请确认：
+  - `<DATASET_REPO_ID>` -> `${USER}/so101_demo`
+  - `<TASK_DESCRIPTION>` -> `demo task`
+- 执行前提示: 确认数据集名、任务描述和 `top/wrist` 角色都符合本组实际。
+
+可直接执行命令：
+
+- 当前无法生成可直接执行命令。
+
+教学版参考命令：
+
+```bash
+lerobot-record \
+  --robot.type=so101_follower \
+  --robot.port=<FOLLOWER_PORT> \
+  --teleop.type=so101_leader \
+  --teleop.port=<LEADER_PORT> \
+  --robot.cameras='{"top": {"type": "opencv", "index_or_path": "<TOP_CAMERA_DEV>", "width": 640, "height": 480, "fps": 30}, "wrist": {"type": "opencv", "index_or_path": "<WRIST_CAMERA_DEV>", "width": 640, "height": 480, "fps": 30}}' \
+  --display_data=true \
+  --dataset.repo_id=<DATASET_REPO_ID> \
+  --dataset.single_task='<TASK_DESCRIPTION>' \
+  --dataset.num_episodes=5 \
+  --dataset.episode_time_s=20 \
+  --dataset.push_to_hub=false
+```
+
+本机应参考的占位符取值：
+- `<LEADER_PORT>` -> `<请根据检测结果填写>`
+- `<FOLLOWER_PORT>` -> `<请根据检测结果填写>`
+- `<TOP_CAMERA_DEV>` -> `<请根据检测结果填写>`
+- `<WRIST_CAMERA_DEV>` -> `<请根据检测结果填写>`
+- `<DATASET_REPO_ID>` -> `<请自行命名，例如 ${USER}/so101_pick_place>`
+- `<TASK_DESCRIPTION>` -> `<请填写任务描述，例如 pick cube and place into tray>`
+
+如果你要手动改写，请修改这些参数：
+- `<LEADER_PORT>`
+- `<FOLLOWER_PORT>`
+- `<TOP_CAMERA_DEV>`
+- `<WRIST_CAMERA_DEV>`
+- `<DATASET_REPO_ID>`
+- `<TASK_DESCRIPTION>`
+
+修改后应达到的效果：完成多条 episode 采集，本地生成数据集目录，可用于 replay 和 ACT 训练。
+
+自检问题：
+- 如果你的数据集名想换成 so101_stack_blocks，应修改哪个占位符？
+- 为什么录制命令里也必须保留 camera 参数？
+
+### replay - 回放命令
+
+当前命令生成状态：
+- `direct_command_ready`: `False`
+- 状态说明: 当前缺少角色 `follower`，因此无法直接生成命令。
+- 处理建议: 先阅读 [02A. 如何填写 device_roles.json](/home/xuan/so101_education/basic_operation/02a_device_roles_filling_guide.md)，完成角色绑定后再重新运行检测。
+- 自动默认值，执行前请确认：
+  - `<DATASET_REPO_ID>` -> `${USER}/so101_demo`
+  - `<EPISODE_INDEX>` -> `0`
+- 执行前提示: 确认这次回放要验证的是数据可复现，且数据集名与 episode 编号正确。
+
+可直接执行命令：
+
+- 当前无法生成可直接执行命令。
+
+教学版参考命令：
+
+```bash
+lerobot-replay \
+  --robot.type=so101_follower \
+  --robot.port=<FOLLOWER_PORT> \
+  --dataset.repo_id=<DATASET_REPO_ID> \
+  --episode=<EPISODE_INDEX>
+```
+
+本机应参考的占位符取值：
+- `<FOLLOWER_PORT>` -> `<请根据检测结果填写>`
+- `<DATASET_REPO_ID>` -> `<请自行命名，例如 ${USER}/so101_pick_place>`
+- `<EPISODE_INDEX>` -> `0`
+
+如果你要手动改写，请修改这些参数：
+- `<FOLLOWER_PORT>`
+- `<DATASET_REPO_ID>`
+- `<EPISODE_INDEX>`
+
+修改后应达到的效果：从臂按已采集轨迹复现动作，学生能验证录制数据是否可用。
+
+自检问题：
+- 如果要回放第 2 条 episode，应修改哪个占位符？
+- 为什么 replay 时不需要填写 leader 端口？
+
+### rollout - 策略部署命令
+
+当前命令生成状态：
+- `direct_command_ready`: `False`
+- 状态说明: 当前缺少角色 `follower`, `top_camera`, `wrist_camera`，因此无法直接生成命令。
+- 处理建议: 先阅读 [02A. 如何填写 device_roles.json](/home/xuan/so101_education/basic_operation/02a_device_roles_filling_guide.md)，完成角色绑定后再重新运行检测。
+- 自动默认值，执行前请确认：
+  - `<CHECKPOINT_PATH>` -> `outputs/train/latest/checkpoints/last`
+- 执行前提示: 确认 checkpoint 路径不是默认草稿，且 `follower + top + wrist` 仍然对应这次连接。
+
+可直接执行命令：
+
+- 当前无法生成可直接执行命令。
+
+教学版参考命令：
+
+```bash
+lerobot-rollout \
+  --robot.type=so101_follower \
+  --robot.port=<FOLLOWER_PORT> \
+  --robot.cameras='{"top": {"type": "opencv", "index_or_path": "<TOP_CAMERA_DEV>", "width": 640, "height": 480, "fps": 30}, "wrist": {"type": "opencv", "index_or_path": "<WRIST_CAMERA_DEV>", "width": 640, "height": 480, "fps": 30}}' \
+  --policy.path=<CHECKPOINT_PATH>
+```
+
+本机应参考的占位符取值：
+- `<FOLLOWER_PORT>` -> `<请根据检测结果填写>`
+- `<TOP_CAMERA_DEV>` -> `<请根据检测结果填写>`
+- `<WRIST_CAMERA_DEV>` -> `<请根据检测结果填写>`
+- `<CHECKPOINT_PATH>` -> `<请填写训练输出中的 checkpoint 路径>`
+
+如果你要手动改写，请修改这些参数：
+- `<FOLLOWER_PORT>`
+- `<TOP_CAMERA_DEV>`
+- `<WRIST_CAMERA_DEV>`
+- `<CHECKPOINT_PATH>`
+
+修改后应达到的效果：已训练策略加载成功，follower 在相机反馈下执行任务。
+
+自检问题：
+- 为什么 rollout 阶段还要再次检查 top 和 wrist 的 camera 端口？
+- 如果 checkpoint 目录换了，你应替换哪个占位符？

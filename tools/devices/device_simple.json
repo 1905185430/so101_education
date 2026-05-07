@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-05-07T18:07:15.026412",
+  "timestamp": "2026-05-07T18:15:54.584787",
   "roles": {
     "arms": {
       "leader": {
@@ -116,7 +116,7 @@
       "serial": "5B41532613",
       "status": "connected",
       "first_seen": "2026-04-24T21:55:24.807057",
-      "last_seen": "2026-05-07T18:07:15.025842"
+      "last_seen": "2026-05-07T18:15:54.583720"
     },
     "5B42137834": {
       "tty": "/dev/ttyACM1",
@@ -124,7 +124,7 @@
       "serial": "5B42137834",
       "status": "connected",
       "first_seen": "2026-04-24T21:55:24.807057",
-      "last_seen": "2026-05-07T18:07:15.025842"
+      "last_seen": "2026-05-07T18:15:54.583720"
     }
   },
   "cameras": {
@@ -136,7 +136,7 @@
       "by_path": "/dev/v4l/by-path/pci-0000:00:14.0-usb-0:7:1.0-video-index0",
       "status": "connected",
       "first_seen": "2026-04-24T21:55:24.807043",
-      "last_seen": "2026-05-07T18:07:15.025824",
+      "last_seen": "2026-05-07T18:15:54.583700",
       "color_stream": null,
       "image": "",
       "capture_status": "failed",
@@ -150,7 +150,7 @@
       "by_path": "/dev/v4l/by-path/pci-0000:00:14.0-usb-0:1.4:1.0-video-index0",
       "status": "connected",
       "first_seen": "2026-04-24T21:55:24.807043",
-      "last_seen": "2026-05-07T18:07:15.025824",
+      "last_seen": "2026-05-07T18:15:54.583700",
       "color_stream": null,
       "image": "",
       "capture_status": "failed",
@@ -177,7 +177,7 @@
       "by_path": "/dev/v4l/by-path/pci-0000:00:14.0-usb-0:1.1:1.0-video-index0",
       "status": "connected",
       "first_seen": "2026-04-24T21:55:24.807043",
-      "last_seen": "2026-05-07T18:07:15.025824",
+      "last_seen": "2026-05-07T18:15:54.583700",
       "color_stream": null,
       "image": "",
       "capture_status": "failed",
@@ -192,7 +192,7 @@
       "color_stream": null,
       "status": "connected",
       "first_seen": "2026-05-07T17:43:57.693944",
-      "last_seen": "2026-05-07T18:07:15.025824",
+      "last_seen": "2026-05-07T18:15:54.583700",
       "image": "",
       "capture_status": "failed",
       "capture_detail": "OpenCV 未安装，无法保存截图。"

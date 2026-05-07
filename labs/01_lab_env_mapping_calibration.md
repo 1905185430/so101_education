@@ -1,6 +1,6 @@
 # 第一次课：环境验证、设备映射与主从臂校准
 
-本次课的目标是让学生在已预装好的 LeRobot 环境中，学会读取检测报告、绑定设备角色，并优先使用检测工具给出的直接命令完成主从臂校准。
+本次课的目标是让学生在已预装好的 LeRobot 环境中，学会读取检测报告、绑定设备角色，并沿着检测工具给出的基线完成主从臂校准。
 
 ## 先修导学
 
@@ -63,10 +63,15 @@ lerobot-find-port
 
 如果你重新插拔了主从臂，`/dev/ttyACM*` 可能会变，但只要 `device_roles.json` 里写的是正确的 `by-id`，角色就应该还能恢复成原来的 `leader` / `follower`。
 
-### 3. 参考命令
+### 3. 执行前先确认
 
-如果 `python3 tools/detect_system.py` 生成了“可直接执行命令”，优先直接复制那一段校准命令。  
-只有在你需要课堂讲解、或者角色还没有绑定成功时，才使用下面这段教学版参考命令。
+- 先确认你已经分清哪只是 `leader`、哪只是 `follower`
+- 先确认机械臂角色恢复后显示的 `tty` 与这次实际连接一致
+- 先确认 `device_roles.json` 里机械臂填写的是 `by-id / serial`，不是临时 `tty`
+
+确认完这 3 件事后，再执行报告里的“可直接执行命令”。下面保留教学版参考命令，便于你在执行后回看参数来源。
+
+### 4. 教学版参考命令
 
 ```bash
 lerobot-calibrate \
@@ -80,8 +85,8 @@ lerobot-calibrate \
 
 ## 你需要修改的参数
 
-- `<LEADER_PORT>`：改成检测报告中 `leader` 当前对应的 `tty`
-- `<FOLLOWER_PORT>`：改成检测报告中 `follower` 当前对应的 `tty`
+- `<LEADER_PORT>`：对应 `leader` 当前的 `tty`
+- `<FOLLOWER_PORT>`：对应 `follower` 当前的 `tty`
 
 ## 修改后应达到的效果
 

@@ -1,6 +1,6 @@
 # 02. 设备映射与角色绑定
 
-本章的目标是区分“设备身份”和“当前端口号”，并把你的设备绑定到统一的教学角色名上。
+本章的目标只做两件事：区分主从臂与相机角色，以及区分“固定身份”和“当前端口号”。
 
 如果你现在最关心的是“怎么分清哪只是主臂、哪只是从臂、哪一路是 top/wrist 相机”，请优先阅读：
 
@@ -52,7 +52,7 @@ lerobot-find-port
 4. 把这些固定身份填入 `device_roles.json`
 5. 再运行一次 `python3 tools/detect_system.py`
 6. 确认 `leader`、`follower`、`top_camera`、`wrist_camera` 已从 `missing` 变成 `connected`
-7. 角色恢复成功后，优先复制检测工具给出的可直接执行命令；如果要做课堂解释，再去看教学版参考命令里的当前 `tty` / `dev`
+7. 角色恢复成功后，先核对当前 `tty` / `dev` 是否和这次连接一致，再执行检测工具给出的可直接执行命令
 
 如果你还不能明确判断主从臂和相机角色，不要在这一章里硬猜。  
 先去按 [02A. 如何填写 device_roles.json](/home/xuan/so101_education/basic_operation/02a_device_roles_filling_guide.md) 里的动作法和截图法做判断，再回来填写。
@@ -99,7 +99,12 @@ lerobot-find-port
 - 即使重插设备，工具仍然能恢复这些角色
 - 报告中的截图能帮助你确认哪一路画面是 `top`，哪一路画面是 `wrist`
 
-## 6. 命令改写训练
+## 6. 这一章你必须看懂的两件事
+
+- 哪只是 `leader`、哪只是 `follower`
+- `by-id / by_path` 为什么用来保存固定身份，而当前 `/dev/ttyACM*`、`/dev/video*` 只用于这一次执行
+
+## 7. 命令改写训练
 
 如果报告中写着：
 
@@ -116,13 +121,13 @@ lerobot-find-port
 - `device_roles.json` 里优先填写 `top_camera.by_path` 和 `wrist_camera.by_path`
 - 真正改 LeRobot 命令时，再填写 `top_camera`、`wrist_camera` 当前的 `/dev/video*`
 
-## 7. 自检问题
+## 8. 自检问题
 
 - 为什么不能只记住 `/dev/ttyACM0` 是 leader？
 - `serial` 和 `by_path` 分别更适合描述哪类设备？
 - 如果断电重连后 `top_camera` 从 `/dev/video10` 变成 `/dev/video12`，你应该先改 `device_roles.json` 还是先改命令？
 
-## 8. 本章提交要求
+## 9. 本章提交要求
 
 - 提交你填写后的 `device_roles.json`
 - 提交一次更新后的 `report.md`
