@@ -1,0 +1,134 @@
+{
+  "timestamp": "2026-05-07T16:28:15.943490",
+  "roles": {
+    "arms": {
+      "leader": {
+        "configured": false,
+        "status": "missing",
+        "match": {},
+        "serial": null,
+        "spec": {
+          "serial": "",
+          "port": ""
+        }
+      },
+      "follower": {
+        "configured": false,
+        "status": "missing",
+        "match": {},
+        "serial": null,
+        "spec": {
+          "serial": "",
+          "port": ""
+        }
+      }
+    },
+    "cameras": {
+      "top_camera": {
+        "configured": false,
+        "status": "missing",
+        "match": {},
+        "serial": null,
+        "spec": {
+          "serial": "",
+          "by_path": ""
+        }
+      },
+      "side_camera": {
+        "configured": false,
+        "status": "missing",
+        "match": {},
+        "serial": null,
+        "spec": {
+          "serial": "",
+          "by_path": ""
+        }
+      },
+      "wrist_camera": {
+        "configured": false,
+        "status": "missing",
+        "match": {},
+        "serial": null,
+        "spec": {
+          "serial": "",
+          "by_path": ""
+        }
+      }
+    }
+  },
+  "arms": {
+    "5B41532613": {
+      "tty": "/dev/ttyACM0",
+      "port": "/dev/serial/by-id/usb-1a86_USB_Single_Serial_5B41532613-if00",
+      "serial": "5B41532613",
+      "status": "connected",
+      "first_seen": "2026-04-24T21:55:24.807057",
+      "last_seen": "2026-05-07T16:28:15.942816"
+    },
+    "5B42137834": {
+      "tty": "/dev/ttyACM1",
+      "port": "/dev/serial/by-id/usb-1a86_USB_Single_Serial_5B42137834-if00",
+      "serial": "5B42137834",
+      "status": "connected",
+      "first_seen": "2026-04-24T21:55:24.807057",
+      "last_seen": "2026-05-07T16:28:15.942816"
+    }
+  },
+  "cameras": {
+    "Sonix_Technology_Co.__Ltd._USB2.0_HD_UVC_WebCam": {
+      "dev": "/dev/video0",
+      "product": "USB2.0 HD",
+      "by_id": "/dev/v4l/by-id/usb-Sonix_Technology_Co.__Ltd._USB2.0_HD_UVC_WebCam-video-index0",
+      "serial": "Sonix_Technology_Co.__Ltd._USB2.0_HD_UVC_WebCam",
+      "by_path": "/dev/v4l/by-path/pci-0000:00:14.0-usb-0:7:1.0-video-index0",
+      "status": "disconnected",
+      "first_seen": "2026-04-24T21:55:24.807043",
+      "last_seen": "2026-04-27T21:43:32.552225"
+    },
+    "Orbbec_R__Orbbec_Gemini_335_CP15641000AW": {
+      "dev": "/dev/video10",
+      "product": "Orbbec Gemin",
+      "by_id": "/dev/v4l/by-id/usb-Orbbec_R__Orbbec_Gemini_335_CP15641000AW-video-index0",
+      "serial": "Orbbec_R__Orbbec_Gemini_335_CP15641000AW",
+      "by_path": "/dev/v4l/by-path/pci-0000:00:14.0-usb-0:1.4:1.4-video-index0",
+      "status": "disconnected",
+      "first_seen": "2026-04-24T21:55:24.807043",
+      "last_seen": "2026-04-27T21:43:32.552225"
+    },
+    "Orbbec_R__Orbbec_Gemini_335_CP1L44P0007K": {
+      "dev": "/dev/video14",
+      "product": "Orbbec Gemin",
+      "by_id": "/dev/v4l/by-id/usb-Orbbec_R__Orbbec_Gemini_335_CP1L44P0007K-video-index0",
+      "serial": "Orbbec_R__Orbbec_Gemini_335_CP1L44P0007K",
+      "by_path": "/dev/v4l/by-path/pci-0000:00:14.0-usb-0:1:1.4-video-index0",
+      "status": "disconnected",
+      "first_seen": "2026-04-24T21:55:24.807043",
+      "last_seen": "2026-04-25T12:45:34.118644"
+    },
+    "icSpring_icspring_camera_20240307110322": {
+      "dev": "/dev/video2",
+      "product": "icspring camer",
+      "by_id": "/dev/v4l/by-id/usb-icSpring_icspring_camera_20240307110322-video-index0",
+      "serial": "icSpring_icspring_camera_20240307110322",
+      "by_path": "/dev/v4l/by-path/pci-0000:00:14.0-usb-0:1.1:1.0-video-index0",
+      "status": "disconnected",
+      "first_seen": "2026-04-24T21:55:24.807043",
+      "last_seen": "2026-04-27T21:43:32.552225"
+    }
+  },
+  "summary": {
+    "checks": {
+      "pass": 3,
+      "warn": 13,
+      "fail": 0
+    },
+    "arms": {
+      "total": 2,
+      "connected": 2
+    },
+    "cameras": {
+      "total": 4,
+      "connected": 0
+    }
+  }
+}

@@ -1,0 +1,806 @@
+{
+  "timestamp": "2026-05-07T16:28:15.943490",
+  "stage": "all",
+  "system": {
+    "cwd": "/home/xuan/so101_education",
+    "python_version": "3.13.13",
+    "platform": "linux"
+  },
+  "checks": {
+    "env": [
+      {
+        "name": "python",
+        "status": "warn",
+        "detail": "当前 Python 版本: 3.13.13",
+        "hint": "LeRobot 常见教学环境建议使用 Python 3.10-3.12。"
+      },
+      {
+        "name": "ffmpeg",
+        "status": "pass",
+        "detail": "ffmpeg: 已找到",
+        "hint": "如果后续实验会用到 ffmpeg，请先在 LeRobot 环境中完成安装。"
+      },
+      {
+        "name": "v4l2-ctl",
+        "status": "warn",
+        "detail": "v4l2-ctl: 未找到",
+        "hint": "如果后续实验会用到 v4l2-ctl，请先在 LeRobot 环境中完成安装。"
+      },
+      {
+        "name": "nvidia-smi",
+        "status": "warn",
+        "detail": "nvidia-smi: 未找到",
+        "hint": "如果后续实验会用到 nvidia-smi，请先在 LeRobot 环境中完成安装。"
+      },
+      {
+        "name": "lerobot-find-port",
+        "status": "warn",
+        "detail": "lerobot-find-port: 未找到",
+        "hint": "如果后续实验会用到 lerobot-find-port，请先在 LeRobot 环境中完成安装。"
+      },
+      {
+        "name": "lerobot-calibrate",
+        "status": "warn",
+        "detail": "lerobot-calibrate: 未找到",
+        "hint": "如果后续实验会用到 lerobot-calibrate，请先在 LeRobot 环境中完成安装。"
+      },
+      {
+        "name": "lerobot-record",
+        "status": "warn",
+        "detail": "lerobot-record: 未找到",
+        "hint": "如果后续实验会用到 lerobot-record，请先在 LeRobot 环境中完成安装。"
+      },
+      {
+        "name": "lerobot-train",
+        "status": "warn",
+        "detail": "lerobot-train: 未找到",
+        "hint": "如果后续实验会用到 lerobot-train，请先在 LeRobot 环境中完成安装。"
+      },
+      {
+        "name": "lerobot-rollout",
+        "status": "warn",
+        "detail": "lerobot-rollout: 未找到",
+        "hint": "如果后续实验会用到 lerobot-rollout，请先在 LeRobot 环境中完成安装。"
+      },
+      {
+        "name": "opencv-python",
+        "status": "warn",
+        "detail": "cv2 未安装",
+        "hint": "如需保存相机截图，请在教学环境中安装 opencv-python。"
+      },
+      {
+        "name": "dialout",
+        "status": "warn",
+        "detail": "当前用户组: xuan adm cdrom sudo dip plugdev users lpadmin lxd",
+        "hint": "若串口权限不足，请执行 sudo usermod -a -G dialout $USER 后重新登录。"
+      }
+    ],
+    "robot": [
+      {
+        "name": "arms_detected",
+        "status": "pass",
+        "detail": "已连接机械臂数量: 2",
+        "hint": "请检查主从臂供电、USB 连接和串口权限。"
+      }
+    ],
+    "camera": [
+      {
+        "name": "cameras_detected",
+        "status": "warn",
+        "detail": "已连接相机数量: 0",
+        "hint": "如果后续实验需要相机，请检查 USB 连接和供电。"
+      },
+      {
+        "name": "camera_color_stream",
+        "status": "warn",
+        "detail": "支持彩色流的已连接相机数量: 0",
+        "hint": "如果采集或遥操作需要画面显示，请优先选择支持彩色流的相机。"
+      }
+    ],
+    "train": [
+      {
+        "name": "gpu",
+        "status": "warn",
+        "detail": "未检测到 nvidia-smi。",
+        "hint": "如果课程要求本地 ACT 训练，请确认机器已安装 NVIDIA 驱动和 CUDA 环境。"
+      },
+      {
+        "name": "disk",
+        "status": "pass",
+        "detail": "当前工作目录剩余空间约 738.6 GB。",
+        "hint": "建议为数据采集和训练预留至少 20 GB 可用空间。"
+      }
+    ]
+  },
+  "roles_config": {
+    "arms": {
+      "leader": {
+        "serial": "",
+        "port": ""
+      },
+      "follower": {
+        "serial": "",
+        "port": ""
+      }
+    },
+    "cameras": {
+      "top_camera": {
+        "serial": "",
+        "by_path": ""
+      },
+      "side_camera": {
+        "serial": "",
+        "by_path": ""
+      },
+      "wrist_camera": {
+        "serial": "",
+        "by_path": ""
+      }
+    }
+  },
+  "roles": {
+    "arms": {
+      "leader": {
+        "configured": false,
+        "status": "missing",
+        "match": {},
+        "serial": null,
+        "spec": {
+          "serial": "",
+          "port": ""
+        }
+      },
+      "follower": {
+        "configured": false,
+        "status": "missing",
+        "match": {},
+        "serial": null,
+        "spec": {
+          "serial": "",
+          "port": ""
+        }
+      }
+    },
+    "cameras": {
+      "top_camera": {
+        "configured": false,
+        "status": "missing",
+        "match": {},
+        "serial": null,
+        "spec": {
+          "serial": "",
+          "by_path": ""
+        }
+      },
+      "side_camera": {
+        "configured": false,
+        "status": "missing",
+        "match": {},
+        "serial": null,
+        "spec": {
+          "serial": "",
+          "by_path": ""
+        }
+      },
+      "wrist_camera": {
+        "configured": false,
+        "status": "missing",
+        "match": {},
+        "serial": null,
+        "spec": {
+          "serial": "",
+          "by_path": ""
+        }
+      }
+    }
+  },
+  "devices": {
+    "arms": {
+      "5B41532613": {
+        "tty": "/dev/ttyACM0",
+        "port": "/dev/serial/by-id/usb-1a86_USB_Single_Serial_5B41532613-if00",
+        "serial": "5B41532613",
+        "status": "connected",
+        "first_seen": "2026-04-24T21:55:24.807057",
+        "last_seen": "2026-05-07T16:28:15.942816"
+      },
+      "5B42137834": {
+        "tty": "/dev/ttyACM1",
+        "port": "/dev/serial/by-id/usb-1a86_USB_Single_Serial_5B42137834-if00",
+        "serial": "5B42137834",
+        "status": "connected",
+        "first_seen": "2026-04-24T21:55:24.807057",
+        "last_seen": "2026-05-07T16:28:15.942816"
+      }
+    },
+    "cameras": {
+      "Sonix_Technology_Co.__Ltd._USB2.0_HD_UVC_WebCam": {
+        "dev": "/dev/video0",
+        "product": "USB2.0 HD",
+        "by_id": "/dev/v4l/by-id/usb-Sonix_Technology_Co.__Ltd._USB2.0_HD_UVC_WebCam-video-index0",
+        "serial": "Sonix_Technology_Co.__Ltd._USB2.0_HD_UVC_WebCam",
+        "by_path": "/dev/v4l/by-path/pci-0000:00:14.0-usb-0:7:1.0-video-index0",
+        "formats": [
+          {
+            "fourcc": "MJPG",
+            "resolutions": [
+              {
+                "width": 1280,
+                "height": 720,
+                "fps": [
+                  30.0
+                ]
+              },
+              {
+                "width": 640,
+                "height": 480,
+                "fps": [
+                  30.0
+                ]
+              },
+              {
+                "width": 352,
+                "height": 288,
+                "fps": [
+                  30.0
+                ]
+              },
+              {
+                "width": 320,
+                "height": 240,
+                "fps": [
+                  30.0
+                ]
+              },
+              {
+                "width": 176,
+                "height": 144,
+                "fps": [
+                  30.0
+                ]
+              },
+              {
+                "width": 160,
+                "height": 120,
+                "fps": [
+                  30.0
+                ]
+              }
+            ]
+          },
+          {
+            "fourcc": "YUYV",
+            "resolutions": [
+              {
+                "width": 1280,
+                "height": 720,
+                "fps": [
+                  10.0
+                ]
+              },
+              {
+                "width": 640,
+                "height": 480,
+                "fps": [
+                  30.0
+                ]
+              },
+              {
+                "width": 352,
+                "height": 288,
+                "fps": [
+                  30.0
+                ]
+              },
+              {
+                "width": 320,
+                "height": 240,
+                "fps": [
+                  30.0
+                ]
+              },
+              {
+                "width": 176,
+                "height": 144,
+                "fps": [
+                  30.0
+                ]
+              },
+              {
+                "width": 160,
+                "height": 120,
+                "fps": [
+                  30.0
+                ]
+              }
+            ]
+          }
+        ],
+        "status": "disconnected",
+        "first_seen": "2026-04-24T21:55:24.807043",
+        "last_seen": "2026-04-27T21:43:32.552225"
+      },
+      "Orbbec_R__Orbbec_Gemini_335_CP15641000AW": {
+        "dev": "/dev/video10",
+        "product": "Orbbec Gemin",
+        "by_id": "/dev/v4l/by-id/usb-Orbbec_R__Orbbec_Gemini_335_CP15641000AW-video-index0",
+        "serial": "Orbbec_R__Orbbec_Gemini_335_CP15641000AW",
+        "by_path": "/dev/v4l/by-path/pci-0000:00:14.0-usb-0:1.4:1.4-video-index0",
+        "formats": [
+          {
+            "fourcc": "YUYV",
+            "resolutions": [
+              {
+                "width": 320,
+                "height": 180,
+                "fps": [
+                  60.0,
+                  30.0,
+                  6.0
+                ]
+              },
+              {
+                "width": 320,
+                "height": 240,
+                "fps": [
+                  60.0,
+                  30.0,
+                  6.0
+                ]
+              },
+              {
+                "width": 424,
+                "height": 240,
+                "fps": [
+                  60.0,
+                  30.0,
+                  15.0,
+                  6.0
+                ]
+              },
+              {
+                "width": 640,
+                "height": 360,
+                "fps": [
+                  60.0,
+                  30.0,
+                  15.0,
+                  6.0
+                ]
+              },
+              {
+                "width": 640,
+                "height": 480,
+                "fps": [
+                  60.0,
+                  30.0,
+                  15.0,
+                  6.0
+                ]
+              },
+              {
+                "width": 848,
+                "height": 480,
+                "fps": [
+                  60.0,
+                  30.0,
+                  15.0,
+                  6.0
+                ]
+              },
+              {
+                "width": 960,
+                "height": 540,
+                "fps": [
+                  60.0,
+                  30.0,
+                  15.0,
+                  6.0
+                ]
+              },
+              {
+                "width": 1280,
+                "height": 720,
+                "fps": [
+                  60.0,
+                  30.0,
+                  15.0,
+                  6.0
+                ]
+              },
+              {
+                "width": 1920,
+                "height": 1080,
+                "fps": [
+                  30.0,
+                  15.0,
+                  6.0
+                ]
+              }
+            ]
+          },
+          {
+            "fourcc": "MJPG",
+            "resolutions": [
+              {
+                "width": 320,
+                "height": 180,
+                "fps": [
+                  60.0,
+                  30.0,
+                  6.0
+                ]
+              },
+              {
+                "width": 320,
+                "height": 240,
+                "fps": [
+                  60.0,
+                  30.0,
+                  6.0
+                ]
+              },
+              {
+                "width": 424,
+                "height": 240,
+                "fps": [
+                  60.0,
+                  30.0,
+                  15.0,
+                  6.0
+                ]
+              },
+              {
+                "width": 640,
+                "height": 360,
+                "fps": [
+                  60.0,
+                  30.0,
+                  15.0,
+                  6.0
+                ]
+              },
+              {
+                "width": 640,
+                "height": 480,
+                "fps": [
+                  60.0,
+                  30.0,
+                  15.0,
+                  6.0
+                ]
+              },
+              {
+                "width": 848,
+                "height": 480,
+                "fps": [
+                  60.0,
+                  30.0,
+                  15.0,
+                  6.0
+                ]
+              },
+              {
+                "width": 960,
+                "height": 540,
+                "fps": [
+                  60.0,
+                  30.0,
+                  15.0,
+                  6.0
+                ]
+              },
+              {
+                "width": 1280,
+                "height": 720,
+                "fps": [
+                  60.0,
+                  30.0,
+                  15.0,
+                  6.0
+                ]
+              },
+              {
+                "width": 1920,
+                "height": 1080,
+                "fps": [
+                  30.0,
+                  15.0,
+                  6.0
+                ]
+              }
+            ]
+          }
+        ],
+        "status": "disconnected",
+        "first_seen": "2026-04-24T21:55:24.807043",
+        "last_seen": "2026-04-27T21:43:32.552225"
+      },
+      "Orbbec_R__Orbbec_Gemini_335_CP1L44P0007K": {
+        "dev": "/dev/video14",
+        "product": "Orbbec Gemin",
+        "by_id": "/dev/v4l/by-id/usb-Orbbec_R__Orbbec_Gemini_335_CP1L44P0007K-video-index0",
+        "serial": "Orbbec_R__Orbbec_Gemini_335_CP1L44P0007K",
+        "by_path": "/dev/v4l/by-path/pci-0000:00:14.0-usb-0:1:1.4-video-index0",
+        "formats": [
+          {
+            "fourcc": "YUYV",
+            "resolutions": [
+              {
+                "width": 424,
+                "height": 240,
+                "fps": [
+                  60.0,
+                  30.0,
+                  15.0,
+                  6.0
+                ]
+              },
+              {
+                "width": 640,
+                "height": 480,
+                "fps": [
+                  30.0,
+                  15.0,
+                  6.0
+                ]
+              }
+            ]
+          },
+          {
+            "fourcc": "MJPG",
+            "resolutions": [
+              {
+                "width": 424,
+                "height": 240,
+                "fps": [
+                  60.0,
+                  30.0,
+                  15.0,
+                  6.0
+                ]
+              },
+              {
+                "width": 640,
+                "height": 480,
+                "fps": [
+                  30.0,
+                  15.0,
+                  6.0
+                ]
+              },
+              {
+                "width": 1280,
+                "height": 720,
+                "fps": [
+                  15.0,
+                  10.0,
+                  6.0
+                ]
+              },
+              {
+                "width": 1920,
+                "height": 1080,
+                "fps": [
+                  8.0
+                ]
+              }
+            ]
+          }
+        ],
+        "status": "disconnected",
+        "first_seen": "2026-04-24T21:55:24.807043",
+        "last_seen": "2026-04-25T12:45:34.118644"
+      },
+      "icSpring_icspring_camera_20240307110322": {
+        "dev": "/dev/video2",
+        "product": "icspring camer",
+        "by_id": "/dev/v4l/by-id/usb-icSpring_icspring_camera_20240307110322-video-index0",
+        "serial": "icSpring_icspring_camera_20240307110322",
+        "by_path": "/dev/v4l/by-path/pci-0000:00:14.0-usb-0:1.1:1.0-video-index0",
+        "formats": [
+          {
+            "fourcc": "MJPG",
+            "resolutions": [
+              {
+                "width": 1920,
+                "height": 1080,
+                "fps": [
+                  30.0
+                ]
+              },
+              {
+                "width": 608,
+                "height": 1024,
+                "fps": [
+                  30.0,
+                  30.0
+                ]
+              },
+              {
+                "width": 640,
+                "height": 1024,
+                "fps": [
+                  30.0
+                ]
+              },
+              {
+                "width": 640,
+                "height": 480,
+                "fps": [
+                  30.0
+                ]
+              },
+              {
+                "width": 800,
+                "height": 600,
+                "fps": [
+                  30.0
+                ]
+              },
+              {
+                "width": 1280,
+                "height": 720,
+                "fps": [
+                  30.0
+                ]
+              }
+            ]
+          }
+        ],
+        "status": "disconnected",
+        "first_seen": "2026-04-24T21:55:24.807043",
+        "last_seen": "2026-04-27T21:43:32.552225"
+      }
+    }
+  },
+  "summary": {
+    "checks": {
+      "pass": 3,
+      "warn": 13,
+      "fail": 0
+    },
+    "arms": {
+      "total": 2,
+      "connected": 2
+    },
+    "cameras": {
+      "total": 4,
+      "connected": 0
+    }
+  },
+  "reference_templates": {
+    "calibrate": {
+      "title": "校准参考命令",
+      "reference_command": "lerobot-calibrate \\\n  --teleop.type=so101_leader \\\n  --teleop.port=<LEADER_PORT>\n\nlerobot-calibrate \\\n  --robot.type=so101_follower \\\n  --robot.port=<FOLLOWER_PORT>",
+      "replace_values": {
+        "<LEADER_PORT>": "<请根据检测结果填写>",
+        "<FOLLOWER_PORT>": "<请根据检测结果填写>"
+      },
+      "fixed_parameters": [
+        "--teleop.type=so101_leader",
+        "--robot.type=so101_follower"
+      ],
+      "student_must_edit": [
+        "<LEADER_PORT>",
+        "<FOLLOWER_PORT>"
+      ],
+      "expected_result": "主臂和从臂分别完成零位校准，终端出现校准完成或保存结果提示。",
+      "self_check_questions": [
+        "如果 leader 当前对应 /dev/ttyACM1，你应该改哪一段？",
+        "为什么 leader 和 follower 不能共用同一个端口？"
+      ]
+    },
+    "teleoperate": {
+      "title": "遥操作参考命令",
+      "reference_command": "lerobot-teleoperate \\\n  --robot.type=so101_follower \\\n  --robot.port=<FOLLOWER_PORT> \\\n  --teleop.type=so101_leader \\\n  --teleop.port=<LEADER_PORT> \\\n  --robot.cameras='{\"top\": {\"type\": \"opencv\", \"index_or_path\": \"<TOP_CAMERA_DEV>\", \"width\": 640, \"height\": 480, \"fps\": 30}, \"side\": {\"type\": \"opencv\", \"index_or_path\": \"<SIDE_CAMERA_DEV>\", \"width\": 640, \"height\": 480, \"fps\": 30}}' \\\n  --display_data=true",
+      "replace_values": {
+        "<LEADER_PORT>": "<请根据检测结果填写>",
+        "<FOLLOWER_PORT>": "<请根据检测结果填写>",
+        "<TOP_CAMERA_DEV>": "<请根据检测结果填写>",
+        "<SIDE_CAMERA_DEV>": "<请根据检测结果填写>"
+      },
+      "fixed_parameters": [
+        "--robot.type=so101_follower",
+        "--teleop.type=so101_leader",
+        "--display_data=true",
+        "width=640 height=480 fps=30"
+      ],
+      "student_must_edit": [
+        "<LEADER_PORT>",
+        "<FOLLOWER_PORT>",
+        "<TOP_CAMERA_DEV>",
+        "<SIDE_CAMERA_DEV>"
+      ],
+      "expected_result": "移动主臂时，从臂同步运动，终端或弹窗可以看到 top 和 side 画面。",
+      "self_check_questions": [
+        "如果 side camera 实际是 /dev/video4，你应该改 JSON 里的哪一项？",
+        "为什么本章要同时填写 leader、follower 和 camera 参数？"
+      ]
+    },
+    "record": {
+      "title": "数据采集参考命令",
+      "reference_command": "lerobot-record \\\n  --robot.type=so101_follower \\\n  --robot.port=<FOLLOWER_PORT> \\\n  --teleop.type=so101_leader \\\n  --teleop.port=<LEADER_PORT> \\\n  --robot.cameras='{\"top\": {\"type\": \"opencv\", \"index_or_path\": \"<TOP_CAMERA_DEV>\", \"width\": 640, \"height\": 480, \"fps\": 30}, \"side\": {\"type\": \"opencv\", \"index_or_path\": \"<SIDE_CAMERA_DEV>\", \"width\": 640, \"height\": 480, \"fps\": 30}}' \\\n  --display_data=true \\\n  --dataset.repo_id=<DATASET_REPO_ID> \\\n  --dataset.single_task='<TASK_DESCRIPTION>' \\\n  --dataset.num_episodes=5 \\\n  --dataset.episode_time_s=20 \\\n  --dataset.push_to_hub=false",
+      "replace_values": {
+        "<LEADER_PORT>": "<请根据检测结果填写>",
+        "<FOLLOWER_PORT>": "<请根据检测结果填写>",
+        "<TOP_CAMERA_DEV>": "<请根据检测结果填写>",
+        "<SIDE_CAMERA_DEV>": "<请根据检测结果填写>",
+        "<DATASET_REPO_ID>": "<请自行命名，例如 ${USER}/so101_pick_place>",
+        "<TASK_DESCRIPTION>": "<请填写任务描述，例如 pick cube and place into tray>"
+      },
+      "fixed_parameters": [
+        "--robot.type=so101_follower",
+        "--teleop.type=so101_leader",
+        "--dataset.num_episodes=5",
+        "--dataset.episode_time_s=20",
+        "--dataset.push_to_hub=false"
+      ],
+      "student_must_edit": [
+        "<LEADER_PORT>",
+        "<FOLLOWER_PORT>",
+        "<TOP_CAMERA_DEV>",
+        "<SIDE_CAMERA_DEV>",
+        "<DATASET_REPO_ID>",
+        "<TASK_DESCRIPTION>"
+      ],
+      "expected_result": "完成多条 episode 采集，本地生成数据集目录，可用于 replay 和 ACT 训练。",
+      "self_check_questions": [
+        "如果你的数据集名想换成 so101_stack_blocks，应修改哪个占位符？",
+        "为什么录制命令里也必须保留 camera 参数？"
+      ]
+    },
+    "replay": {
+      "title": "回放参考命令",
+      "reference_command": "lerobot-replay \\\n  --robot.type=so101_follower \\\n  --robot.port=<FOLLOWER_PORT> \\\n  --dataset.repo_id=<DATASET_REPO_ID> \\\n  --episode=<EPISODE_INDEX>",
+      "replace_values": {
+        "<FOLLOWER_PORT>": "<请根据检测结果填写>",
+        "<DATASET_REPO_ID>": "<请自行命名，例如 ${USER}/so101_pick_place>",
+        "<EPISODE_INDEX>": "0"
+      },
+      "fixed_parameters": [
+        "--robot.type=so101_follower"
+      ],
+      "student_must_edit": [
+        "<FOLLOWER_PORT>",
+        "<DATASET_REPO_ID>",
+        "<EPISODE_INDEX>"
+      ],
+      "expected_result": "从臂按已采集轨迹复现动作，学生能验证录制数据是否可用。",
+      "self_check_questions": [
+        "如果要回放第 2 条 episode，应修改哪个占位符？",
+        "为什么 replay 时不需要填写 leader 端口？"
+      ]
+    },
+    "rollout": {
+      "title": "策略部署参考命令",
+      "reference_command": "lerobot-rollout \\\n  --robot.type=so101_follower \\\n  --robot.port=<FOLLOWER_PORT> \\\n  --robot.cameras='{\"top\": {\"type\": \"opencv\", \"index_or_path\": \"<TOP_CAMERA_DEV>\", \"width\": 640, \"height\": 480, \"fps\": 30}, \"side\": {\"type\": \"opencv\", \"index_or_path\": \"<SIDE_CAMERA_DEV>\", \"width\": 640, \"height\": 480, \"fps\": 30}}' \\\n  --policy.path=<CHECKPOINT_PATH>",
+      "replace_values": {
+        "<FOLLOWER_PORT>": "<请根据检测结果填写>",
+        "<TOP_CAMERA_DEV>": "<请根据检测结果填写>",
+        "<SIDE_CAMERA_DEV>": "<请根据检测结果填写>",
+        "<CHECKPOINT_PATH>": "<请填写训练输出中的 checkpoint 路径>"
+      },
+      "fixed_parameters": [
+        "--robot.type=so101_follower",
+        "width=640 height=480 fps=30"
+      ],
+      "student_must_edit": [
+        "<FOLLOWER_PORT>",
+        "<TOP_CAMERA_DEV>",
+        "<SIDE_CAMERA_DEV>",
+        "<CHECKPOINT_PATH>"
+      ],
+      "expected_result": "已训练策略加载成功，follower 在相机反馈下执行任务。",
+      "self_check_questions": [
+        "为什么 rollout 阶段还要再次检查 camera 端口？",
+        "如果 checkpoint 目录换了，你应替换哪个占位符？"
+      ]
+    }
+  },
+  "next_steps": [
+    "先核对角色身份是否正确，再开始修改参考命令。",
+    "参考命令中的占位符必须由学生手动替换后再执行。",
+    "如果角色未绑定，请先编辑 tools/devices/device_roles.json。"
+  ]
+}

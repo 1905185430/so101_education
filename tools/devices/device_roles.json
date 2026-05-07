@@ -1,0 +1,26 @@
+{
+  "arms": {
+    "leader": {
+      "serial": "",
+      "port": ""
+    },
+    "follower": {
+      "serial": "",
+      "port": ""
+    }
+  },
+  "cameras": {
+    "top_camera": {
+      "serial": "",
+      "by_path": ""
+    },
+    "side_camera": {
+      "serial": "",
+      "by_path": ""
+    },
+    "wrist_camera": {
+      "serial": "",
+      "by_path": ""
+    }
+  }
+}
