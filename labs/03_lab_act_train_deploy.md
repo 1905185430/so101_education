@@ -1,6 +1,6 @@
 # 第三次课：ACT 训练启动与策略部署
 
-本次课的目标是让学生基于第二次课采集的数据，改写训练与部署命令，完成 ACT 训练启动、日志理解，并在已有或课后完成的 checkpoint 上执行 rollout。
+本次课的目标是让学生基于第二次课采集的数据，改写训练命令，并优先使用检测工具给出的直接部署命令完成 rollout。
 
 ## 先修导学
 
@@ -19,7 +19,7 @@
 - 会改写 `<DATASET_REPO_ID>`、`<OUTPUT_DIR>`、`<CHECKPOINT_PATH>`
 - 能成功启动 ACT 训练
 - 能看懂训练输出目录中的 checkpoint 和日志
-- 能在已有 checkpoint 上改写 rollout 命令
+- 能在已有 checkpoint 上直接执行或改写 rollout 命令
 
 ## 课内步骤
 
@@ -51,6 +51,9 @@ lerobot-train \
 - 能指出后续 rollout 该使用哪个 checkpoint
 
 ### 4. 参考命令：部署
+
+如果 `python3 tools/detect_system.py --show-template rollout` 已经给出“可直接执行命令”，优先直接复制那一段。  
+下面保留的是教学版参考命令，用于理解 follower、camera 和 checkpoint 参数之间的关系。
 
 ```bash
 lerobot-rollout \
@@ -101,7 +104,7 @@ lerobot-rollout \
 - 改写后的训练命令
 - 训练启动截图或日志截图
 - 一份输出目录说明
-- 改写后的 rollout 命令
+- 实际执行过的 rollout 命令
 - 使用自训或教师 checkpoint 的 rollout 结果截图
 
 ## 评分点

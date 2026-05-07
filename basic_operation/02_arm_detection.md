@@ -52,7 +52,7 @@ lerobot-find-port
 4. 把这些固定身份填入 `device_roles.json`
 5. 再运行一次 `python3 tools/detect_system.py`
 6. 确认 `leader`、`follower`、`top_camera`、`wrist_camera` 已从 `missing` 变成 `connected`
-7. 最后才去改 LeRobot 参考命令里的当前 `tty` / `dev`
+7. 角色恢复成功后，优先复制检测工具给出的可直接执行命令；如果要做课堂解释，再去看教学版参考命令里的当前 `tty` / `dev`
 
 如果你还不能明确判断主从臂和相机角色，不要在这一章里硬猜。  
 先去按 [02A. 如何填写 device_roles.json](/home/xuan/so101_education/basic_operation/02a_device_roles_filling_guide.md) 里的动作法和截图法做判断，再回来填写。

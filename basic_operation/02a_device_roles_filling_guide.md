@@ -8,6 +8,9 @@
 这份教程建议和 [02. 设备映射与角色绑定](/home/xuan/so101_education/basic_operation/02_arm_detection.md) 配合使用。  
 `02_arm_detection.md` 负责讲概念，这一章负责告诉你“现在就该怎么做”。
 
+现在 `detect_system` 已经支持输出“可直接执行命令”。  
+这份教程的作用就是：先帮你把角色绑定正确，让这些直出命令真的能生成。
+
 ## 1. 先明白你要填什么
 
 你要填写的是 [device_roles.json](/home/xuan/so101_education/tools/devices/device_roles.json)：
@@ -225,7 +228,8 @@ python3 tools/detect_system.py
 
 1. 重新运行 `python3 tools/detect_system.py`
 2. 让工具根据固定身份恢复角色
-3. 再把本次新的 `tty` / `dev` 写进参考命令
+3. 优先复制这次检测生成的“可直接执行命令”
+4. 如果你还想做课堂讲解，再去看教学版参考命令
 
 ## 9. 常见错误
 

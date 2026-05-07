@@ -1,6 +1,6 @@
 # 第一次课：环境验证、设备映射与主从臂校准
 
-本次课的目标是让学生在已预装好的 LeRobot 环境中，学会读取检测报告、绑定设备角色，并根据当前端口改写主从臂校准命令。
+本次课的目标是让学生在已预装好的 LeRobot 环境中，学会读取检测报告、绑定设备角色，并优先使用检测工具给出的直接命令完成主从臂校准。
 
 ## 先修导学
 
@@ -21,7 +21,8 @@
 - 会运行 `python3 tools/detect_system.py`
 - 会看懂 `leader` 和 `follower` 的当前端口
 - 会填写 `device_roles.json`
-- 会把 `<LEADER_PORT>`、`<FOLLOWER_PORT>` 改写成自己的端口
+- 会判断什么时候可以直接使用检测工具给出的命令
+- 会在需要时把 `<LEADER_PORT>`、`<FOLLOWER_PORT>` 改写成自己的端口
 - 完成主从臂校准
 
 ## 课内步骤
@@ -64,6 +65,9 @@ lerobot-find-port
 
 ### 3. 参考命令
 
+如果 `python3 tools/detect_system.py` 生成了“可直接执行命令”，优先直接复制那一段校准命令。  
+只有在你需要课堂讲解、或者角色还没有绑定成功时，才使用下面这段教学版参考命令。
+
 ```bash
 lerobot-calibrate \
   --teleop.type=so101_leader \
@@ -96,7 +100,7 @@ lerobot-calibrate \
 
 - `tools/devices/report.md`
 - 填写后的 `tools/devices/device_roles.json`
-- 两条改写后的校准命令
+- 你实际执行过的校准命令
 - 一张校准成功截图
 
 ## 评分点

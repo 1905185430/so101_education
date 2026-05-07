@@ -677,12 +677,48 @@ def build_placeholder_values(role_summary: Dict[str, Any]) -> Dict[str, str]:
     return placeholders
 
 
+def apply_replacements(template: str, replacements: Dict[str, str]) -> str:
+    rendered = template
+    for placeholder, value in replacements.items():
+        rendered = rendered.replace(placeholder, value)
+    return rendered
+
+
+def is_resolved_value(value: str) -> bool:
+    return not (value.startswith("<") and value.endswith(">"))
+
+
+def get_role_match_value(role_summary: Dict[str, Any], role_name: str, field: str) -> str | None:
+    if role_name in ARM_ROLE_ORDER:
+        return role_summary.get("arms", {}).get(role_name, {}).get("match", {}).get(field)
+    return role_summary.get("cameras", {}).get(role_name, {}).get("match", {}).get(field)
+
+
+def build_direct_command_payload(
+    role_summary: Dict[str, Any],
+    reference_command: str,
+    required_roles: List[str],
+    direct_values: Dict[str, str],
+    autofilled_defaults: Dict[str, str],
+) -> Dict[str, Any]:
+    missing_roles = [role for role in required_roles if not get_role_match_value(role_summary, role, "tty" if role in ARM_ROLE_ORDER else "dev")]
+    ready = len(missing_roles) == 0
+    detected_values = {k: v for k, v in direct_values.items() if k not in autofilled_defaults and is_resolved_value(v)}
+    return {
+        "direct_command": apply_replacements(reference_command, direct_values) if ready else None,
+        "direct_command_ready": ready,
+        "direct_command_missing_roles": missing_roles,
+        "autofilled_defaults": autofilled_defaults,
+        "detected_values": detected_values,
+    }
+
+
 def build_reference_templates(role_summary: Dict[str, Any]) -> Dict[str, Any]:
     placeholders = build_placeholder_values(role_summary)
     templates: Dict[str, Any] = {}
 
     templates["calibrate"] = {
-        "title": "校准参考命令",
+        "title": "校准命令",
         "reference_command": "\n".join(
             [
                 "lerobot-calibrate \\",
@@ -709,6 +745,18 @@ def build_reference_templates(role_summary: Dict[str, Any]) -> Dict[str, Any]:
             "为什么 leader 和 follower 不能共用同一个端口？",
         ],
     }
+    templates["calibrate"].update(
+        build_direct_command_payload(
+            role_summary,
+            templates["calibrate"]["reference_command"],
+            ["leader", "follower"],
+            {
+                "<LEADER_PORT>": placeholders["<LEADER_PORT>"],
+                "<FOLLOWER_PORT>": placeholders["<FOLLOWER_PORT>"],
+            },
+            {},
+        )
+    )
 
     teleoperate_command = "\n".join(
         [
@@ -722,7 +770,7 @@ def build_reference_templates(role_summary: Dict[str, Any]) -> Dict[str, Any]:
         ]
     )
     templates["teleoperate"] = {
-        "title": "遥操作参考命令",
+        "title": "遥操作命令",
         "reference_command": teleoperate_command,
         "replace_values": {
             "<LEADER_PORT>": placeholders["<LEADER_PORT>"],
@@ -748,6 +796,20 @@ def build_reference_templates(role_summary: Dict[str, Any]) -> Dict[str, Any]:
             "为什么本章要同时填写 leader、follower 和 camera 参数？",
         ],
     }
+    templates["teleoperate"].update(
+        build_direct_command_payload(
+            role_summary,
+            teleoperate_command,
+            ["leader", "follower", "top_camera", "wrist_camera"],
+            {
+                "<LEADER_PORT>": placeholders["<LEADER_PORT>"],
+                "<FOLLOWER_PORT>": placeholders["<FOLLOWER_PORT>"],
+                "<TOP_CAMERA_DEV>": placeholders["<TOP_CAMERA_DEV>"],
+                "<WRIST_CAMERA_DEV>": placeholders["<WRIST_CAMERA_DEV>"],
+            },
+            {},
+        )
+    )
 
     record_command = "\n".join(
         [
@@ -766,7 +828,7 @@ def build_reference_templates(role_summary: Dict[str, Any]) -> Dict[str, Any]:
         ]
     )
     templates["record"] = {
-        "title": "数据采集参考命令",
+        "title": "数据采集命令",
         "reference_command": record_command,
         "replace_values": {
             "<LEADER_PORT>": placeholders["<LEADER_PORT>"],
@@ -797,9 +859,28 @@ def build_reference_templates(role_summary: Dict[str, Any]) -> Dict[str, Any]:
             "为什么录制命令里也必须保留 camera 参数？",
         ],
     }
+    templates["record"].update(
+        build_direct_command_payload(
+            role_summary,
+            record_command,
+            ["leader", "follower", "top_camera", "wrist_camera"],
+            {
+                "<LEADER_PORT>": placeholders["<LEADER_PORT>"],
+                "<FOLLOWER_PORT>": placeholders["<FOLLOWER_PORT>"],
+                "<TOP_CAMERA_DEV>": placeholders["<TOP_CAMERA_DEV>"],
+                "<WRIST_CAMERA_DEV>": placeholders["<WRIST_CAMERA_DEV>"],
+                "<DATASET_REPO_ID>": "${USER}/so101_demo",
+                "<TASK_DESCRIPTION>": "demo task",
+            },
+            {
+                "<DATASET_REPO_ID>": "${USER}/so101_demo",
+                "<TASK_DESCRIPTION>": "demo task",
+            },
+        )
+    )
 
     templates["replay"] = {
-        "title": "回放参考命令",
+        "title": "回放命令",
         "reference_command": "\n".join(
             [
                 "lerobot-replay \\",
@@ -822,9 +903,25 @@ def build_reference_templates(role_summary: Dict[str, Any]) -> Dict[str, Any]:
             "为什么 replay 时不需要填写 leader 端口？",
         ],
     }
+    templates["replay"].update(
+        build_direct_command_payload(
+            role_summary,
+            templates["replay"]["reference_command"],
+            ["follower"],
+            {
+                "<FOLLOWER_PORT>": placeholders["<FOLLOWER_PORT>"],
+                "<DATASET_REPO_ID>": "${USER}/so101_demo",
+                "<EPISODE_INDEX>": "0",
+            },
+            {
+                "<DATASET_REPO_ID>": "${USER}/so101_demo",
+                "<EPISODE_INDEX>": "0",
+            },
+        )
+    )
 
     templates["rollout"] = {
-        "title": "策略部署参考命令",
+        "title": "策略部署命令",
         "reference_command": "\n".join(
             [
                 "lerobot-rollout \\",
@@ -853,6 +950,22 @@ def build_reference_templates(role_summary: Dict[str, Any]) -> Dict[str, Any]:
             "如果 checkpoint 目录换了，你应替换哪个占位符？",
         ],
     }
+    templates["rollout"].update(
+        build_direct_command_payload(
+            role_summary,
+            templates["rollout"]["reference_command"],
+            ["follower", "top_camera", "wrist_camera"],
+            {
+                "<FOLLOWER_PORT>": placeholders["<FOLLOWER_PORT>"],
+                "<TOP_CAMERA_DEV>": placeholders["<TOP_CAMERA_DEV>"],
+                "<WRIST_CAMERA_DEV>": placeholders["<WRIST_CAMERA_DEV>"],
+                "<CHECKPOINT_PATH>": "outputs/train/latest/checkpoints/last",
+            },
+            {
+                "<CHECKPOINT_PATH>": "outputs/train/latest/checkpoints/last",
+            },
+        )
+    )
     return templates
 
 
@@ -906,7 +1019,7 @@ def build_report(
         "再打开 tools/devices/images/ 下的截图，确认哪一路画面是 top、哪一路画面是 wrist。",
         "如果你还分不清哪只是 leader、哪路是 top_camera，请先阅读 basic_operation/02a_device_roles_filling_guide.md。",
         "如果角色未绑定，请先把机械臂的 by-id / serial、相机的 by_path / serial 填入 tools/devices/device_roles.json。",
-        "角色确认无误后，再把参考命令中的当前 tty / video 占位符手动替换掉。",
+        "角色确认无误后，优先直接复制报告里的可执行命令；如果你要理解参数来源，再对照教学版参考命令。",
     ]
 
     return {
@@ -1038,10 +1151,38 @@ def render_markdown(report: Dict[str, Any]) -> str:
             if item["hint"]:
                 lines.append(f"  提示: {item['hint']}")
         lines.append("")
-    lines.append("## 参考命令模板")
+    lines.append("## 命令输出")
     lines.append("")
     for name, template in report["reference_templates"].items():
         lines.append(f"### {name} - {template['title']}")
+        lines.append("")
+        lines.append("当前命令生成状态：")
+        lines.append(f"- `direct_command_ready`: `{template['direct_command_ready']}`")
+        if template["direct_command_ready"]:
+            lines.append("- 状态说明: 必要角色已识别，可直接复制执行。")
+        else:
+            missing = "`, `".join(template["direct_command_missing_roles"])
+            lines.append(f"- 状态说明: 当前缺少角色 `{missing}`，因此无法直接生成命令。")
+            lines.append("- 处理建议: 先阅读 [02A. 如何填写 device_roles.json](/home/xuan/so101_education/basic_operation/02a_device_roles_filling_guide.md)，完成角色绑定后再重新运行检测。")
+        if template["detected_values"]:
+            lines.append("- 来自检测结果的参数：")
+            for placeholder, value in template["detected_values"].items():
+                lines.append(f"  - `{placeholder}` -> `{value}`")
+        if template["autofilled_defaults"]:
+            lines.append("- 自动默认值，执行前请确认：")
+            for placeholder, value in template["autofilled_defaults"].items():
+                lines.append(f"  - `{placeholder}` -> `{value}`")
+        lines.append("")
+        lines.append("可直接执行命令：")
+        lines.append("")
+        if template["direct_command_ready"] and template["direct_command"]:
+            lines.append("```bash")
+            lines.append(template["direct_command"])
+            lines.append("```")
+        else:
+            lines.append("- 当前无法生成可直接执行命令。")
+        lines.append("")
+        lines.append("教学版参考命令：")
         lines.append("")
         lines.append("```bash")
         lines.append(template["reference_command"])
@@ -1051,7 +1192,7 @@ def render_markdown(report: Dict[str, Any]) -> str:
         for placeholder, value in template["replace_values"].items():
             lines.append(f"- `{placeholder}` -> `{value}`")
         lines.append("")
-        lines.append("你需要修改的参数：")
+        lines.append("如果你要手动改写，请修改这些参数：")
         for placeholder in template["student_must_edit"]:
             lines.append(f"- `{placeholder}`")
         lines.append("")
@@ -1119,12 +1260,30 @@ def render_text(report: Dict[str, Any]) -> str:
             hint = f" | 提示: {item['hint']}" if item["hint"] else ""
             lines.append(f"  - {item['status'].upper()} {item['name']}: {item['detail']}{hint}")
         lines.append("")
-    lines.append("参考命令模板:")
+    lines.append("命令输出:")
     for name, template in report["reference_templates"].items():
         lines.append(f"  [{name}] {template['title']}")
+        lines.append(f"    可直接执行: {template['direct_command_ready']}")
+        if template["direct_command_ready"] and template["direct_command"]:
+            lines.append("    [可直接执行命令]")
+            for cmd_line in template["direct_command"].splitlines():
+                lines.append(f"      {cmd_line}")
+        else:
+            missing = ", ".join(template["direct_command_missing_roles"])
+            lines.append(f"    当前无法直出，缺少角色: {missing}")
+            lines.append("    先看 basic_operation/02a_device_roles_filling_guide.md")
+        if template["detected_values"]:
+            lines.append("    来自检测结果的参数:")
+            for placeholder, value in template["detected_values"].items():
+                lines.append(f"      - {placeholder} -> {value}")
+        if template["autofilled_defaults"]:
+            lines.append("    自动默认值，执行前请确认:")
+            for placeholder, value in template["autofilled_defaults"].items():
+                lines.append(f"      - {placeholder} -> {value}")
+        lines.append("    [教学版参考命令]")
         for cmd_line in template["reference_command"].splitlines():
-            lines.append(f"    {cmd_line}")
-        lines.append("    你需要替换:")
+            lines.append(f"      {cmd_line}")
+        lines.append("    手动改写时参考:")
         for placeholder in template["student_must_edit"]:
             lines.append(f"      - {placeholder} -> {template['replace_values'].get(placeholder, '请自行填写')}")
         lines.append(f"    修改后应达到的效果: {template['expected_result']}")

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-05-07T17:53:50.461132",
+  "timestamp": "2026-05-07T18:07:15.026412",
   "stage": "all",
   "system": {
     "cwd": "/home/xuan/so101_education",
@@ -279,7 +279,7 @@
         "serial": "5B41532613",
         "status": "connected",
         "first_seen": "2026-04-24T21:55:24.807057",
-        "last_seen": "2026-05-07T17:53:50.432796"
+        "last_seen": "2026-05-07T18:07:15.025842"
       },
       "5B42137834": {
         "tty": "/dev/ttyACM1",
@@ -287,7 +287,7 @@
         "serial": "5B42137834",
         "status": "connected",
         "first_seen": "2026-04-24T21:55:24.807057",
-        "last_seen": "2026-05-07T17:53:50.432796"
+        "last_seen": "2026-05-07T18:07:15.025842"
       }
     },
     "cameras": {
@@ -300,7 +300,7 @@
         "formats": [],
         "status": "connected",
         "first_seen": "2026-04-24T21:55:24.807043",
-        "last_seen": "2026-05-07T17:53:50.432783",
+        "last_seen": "2026-05-07T18:07:15.025824",
         "color_stream": null,
         "image": "",
         "capture_status": "failed",
@@ -315,7 +315,7 @@
         "formats": [],
         "status": "connected",
         "first_seen": "2026-04-24T21:55:24.807043",
-        "last_seen": "2026-05-07T17:53:50.432783",
+        "last_seen": "2026-05-07T18:07:15.025824",
         "color_stream": null,
         "image": "",
         "capture_status": "failed",
@@ -409,7 +409,7 @@
         "formats": [],
         "status": "connected",
         "first_seen": "2026-04-24T21:55:24.807043",
-        "last_seen": "2026-05-07T17:53:50.432783",
+        "last_seen": "2026-05-07T18:07:15.025824",
         "color_stream": null,
         "image": "",
         "capture_status": "failed",
@@ -425,7 +425,7 @@
         "color_stream": null,
         "status": "connected",
         "first_seen": "2026-05-07T17:43:57.693944",
-        "last_seen": "2026-05-07T17:53:50.432783",
+        "last_seen": "2026-05-07T18:07:15.025824",
         "image": "",
         "capture_status": "failed",
         "capture_detail": "OpenCV 未安装，无法保存截图。"
@@ -448,29 +448,8 @@
     }
   },
   "reference_templates": {
-    "calibrate": {
-      "title": "校准参考命令",
-      "reference_command": "lerobot-calibrate \\\n  --teleop.type=so101_leader \\\n  --teleop.port=<LEADER_PORT>\n\nlerobot-calibrate \\\n  --robot.type=so101_follower \\\n  --robot.port=<FOLLOWER_PORT>",
-      "replace_values": {
-        "<LEADER_PORT>": "<请根据检测结果填写>",
-        "<FOLLOWER_PORT>": "<请根据检测结果填写>"
-      },
-      "fixed_parameters": [
-        "--teleop.type=so101_leader",
-        "--robot.type=so101_follower"
-      ],
-      "student_must_edit": [
-        "<LEADER_PORT>",
-        "<FOLLOWER_PORT>"
-      ],
-      "expected_result": "主臂和从臂分别完成零位校准，终端出现校准完成或保存结果提示。",
-      "self_check_questions": [
-        "如果 leader 当前对应 /dev/ttyACM1，你应该改哪一段？",
-        "为什么 leader 和 follower 不能共用同一个端口？"
-      ]
-    },
     "teleoperate": {
-      "title": "遥操作参考命令",
+      "title": "遥操作命令",
       "reference_command": "lerobot-teleoperate \\\n  --robot.type=so101_follower \\\n  --robot.port=<FOLLOWER_PORT> \\\n  --teleop.type=so101_leader \\\n  --teleop.port=<LEADER_PORT> \\\n  --robot.cameras='{\"top\": {\"type\": \"opencv\", \"index_or_path\": \"<TOP_CAMERA_DEV>\", \"width\": 640, \"height\": 480, \"fps\": 30}, \"wrist\": {\"type\": \"opencv\", \"index_or_path\": \"<WRIST_CAMERA_DEV>\", \"width\": 640, \"height\": 480, \"fps\": 30}}' \\\n  --display_data=true",
       "replace_values": {
         "<LEADER_PORT>": "<请根据检测结果填写>",
@@ -494,86 +473,17 @@
       "self_check_questions": [
         "如果 wrist camera 实际是 /dev/video4，你应该改 JSON 里的哪一项？",
         "为什么本章要同时填写 leader、follower 和 camera 参数？"
-      ]
-    },
-    "record": {
-      "title": "数据采集参考命令",
-      "reference_command": "lerobot-record \\\n  --robot.type=so101_follower \\\n  --robot.port=<FOLLOWER_PORT> \\\n  --teleop.type=so101_leader \\\n  --teleop.port=<LEADER_PORT> \\\n  --robot.cameras='{\"top\": {\"type\": \"opencv\", \"index_or_path\": \"<TOP_CAMERA_DEV>\", \"width\": 640, \"height\": 480, \"fps\": 30}, \"wrist\": {\"type\": \"opencv\", \"index_or_path\": \"<WRIST_CAMERA_DEV>\", \"width\": 640, \"height\": 480, \"fps\": 30}}' \\\n  --display_data=true \\\n  --dataset.repo_id=<DATASET_REPO_ID> \\\n  --dataset.single_task='<TASK_DESCRIPTION>' \\\n  --dataset.num_episodes=5 \\\n  --dataset.episode_time_s=20 \\\n  --dataset.push_to_hub=false",
-      "replace_values": {
-        "<LEADER_PORT>": "<请根据检测结果填写>",
-        "<FOLLOWER_PORT>": "<请根据检测结果填写>",
-        "<TOP_CAMERA_DEV>": "<请根据检测结果填写>",
-        "<WRIST_CAMERA_DEV>": "<请根据检测结果填写>",
-        "<DATASET_REPO_ID>": "<请自行命名，例如 ${USER}/so101_pick_place>",
-        "<TASK_DESCRIPTION>": "<请填写任务描述，例如 pick cube and place into tray>"
-      },
-      "fixed_parameters": [
-        "--robot.type=so101_follower",
-        "--teleop.type=so101_leader",
-        "--dataset.num_episodes=5",
-        "--dataset.episode_time_s=20",
-        "--dataset.push_to_hub=false"
       ],
-      "student_must_edit": [
-        "<LEADER_PORT>",
-        "<FOLLOWER_PORT>",
-        "<TOP_CAMERA_DEV>",
-        "<WRIST_CAMERA_DEV>",
-        "<DATASET_REPO_ID>",
-        "<TASK_DESCRIPTION>"
+      "direct_command": null,
+      "direct_command_ready": false,
+      "direct_command_missing_roles": [
+        "leader",
+        "follower",
+        "top_camera",
+        "wrist_camera"
       ],
-      "expected_result": "完成多条 episode 采集，本地生成数据集目录，可用于 replay 和 ACT 训练。",
-      "self_check_questions": [
-        "如果你的数据集名想换成 so101_stack_blocks，应修改哪个占位符？",
-        "为什么录制命令里也必须保留 camera 参数？"
-      ]
-    },
-    "replay": {
-      "title": "回放参考命令",
-      "reference_command": "lerobot-replay \\\n  --robot.type=so101_follower \\\n  --robot.port=<FOLLOWER_PORT> \\\n  --dataset.repo_id=<DATASET_REPO_ID> \\\n  --episode=<EPISODE_INDEX>",
-      "replace_values": {
-        "<FOLLOWER_PORT>": "<请根据检测结果填写>",
-        "<DATASET_REPO_ID>": "<请自行命名，例如 ${USER}/so101_pick_place>",
-        "<EPISODE_INDEX>": "0"
-      },
-      "fixed_parameters": [
-        "--robot.type=so101_follower"
-      ],
-      "student_must_edit": [
-        "<FOLLOWER_PORT>",
-        "<DATASET_REPO_ID>",
-        "<EPISODE_INDEX>"
-      ],
-      "expected_result": "从臂按已采集轨迹复现动作，学生能验证录制数据是否可用。",
-      "self_check_questions": [
-        "如果要回放第 2 条 episode，应修改哪个占位符？",
-        "为什么 replay 时不需要填写 leader 端口？"
-      ]
-    },
-    "rollout": {
-      "title": "策略部署参考命令",
-      "reference_command": "lerobot-rollout \\\n  --robot.type=so101_follower \\\n  --robot.port=<FOLLOWER_PORT> \\\n  --robot.cameras='{\"top\": {\"type\": \"opencv\", \"index_or_path\": \"<TOP_CAMERA_DEV>\", \"width\": 640, \"height\": 480, \"fps\": 30}, \"wrist\": {\"type\": \"opencv\", \"index_or_path\": \"<WRIST_CAMERA_DEV>\", \"width\": 640, \"height\": 480, \"fps\": 30}}' \\\n  --policy.path=<CHECKPOINT_PATH>",
-      "replace_values": {
-        "<FOLLOWER_PORT>": "<请根据检测结果填写>",
-        "<TOP_CAMERA_DEV>": "<请根据检测结果填写>",
-        "<WRIST_CAMERA_DEV>": "<请根据检测结果填写>",
-        "<CHECKPOINT_PATH>": "<请填写训练输出中的 checkpoint 路径>"
-      },
-      "fixed_parameters": [
-        "--robot.type=so101_follower",
-        "width=640 height=480 fps=30"
-      ],
-      "student_must_edit": [
-        "<FOLLOWER_PORT>",
-        "<TOP_CAMERA_DEV>",
-        "<WRIST_CAMERA_DEV>",
-        "<CHECKPOINT_PATH>"
-      ],
-      "expected_result": "已训练策略加载成功，follower 在相机反馈下执行任务。",
-      "self_check_questions": [
-        "为什么 rollout 阶段还要再次检查 top 和 wrist 的 camera 端口？",
-        "如果 checkpoint 目录换了，你应替换哪个占位符？"
-      ]
+      "autofilled_defaults": {},
+      "detected_values": {}
     }
   },
   "next_steps": [
@@ -581,6 +491,6 @@
     "再打开 tools/devices/images/ 下的截图，确认哪一路画面是 top、哪一路画面是 wrist。",
     "如果你还分不清哪只是 leader、哪路是 top_camera，请先阅读 basic_operation/02a_device_roles_filling_guide.md。",
     "如果角色未绑定，请先把机械臂的 by-id / serial、相机的 by_path / serial 填入 tools/devices/device_roles.json。",
-    "角色确认无误后，再把参考命令中的当前 tty / video 占位符手动替换掉。"
+    "角色确认无误后，优先直接复制报告里的可执行命令；如果你要理解参数来源，再对照教学版参考命令。"
   ]
 }
